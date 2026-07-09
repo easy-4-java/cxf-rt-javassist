@@ -12,9 +12,9 @@ import org.apache.cxf.endpoint.jaxrs.definition.RestMethod;
 import org.apache.cxf.endpoint.jaxrs.definition.RestParam;
 import org.apache.cxf.endpoint.utils.JaxrsEndpointApiUtils;
 
-import com.github.hiwepy.javassist.bytecode.CtFieldBuilder;
-import com.github.hiwepy.javassist.utils.ClassPoolFactory;
-import com.github.hiwepy.javassist.utils.JavassistUtils;
+import io.github.hiwepy.javassist.bytecode.CtFieldBuilder;
+import io.github.hiwepy.javassist.utils.ClassPoolFactory;
+import io.github.hiwepy.javassist.utils.JavassistUtils;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;

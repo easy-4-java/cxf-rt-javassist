@@ -45,8 +45,8 @@ import org.apache.cxf.endpoint.jaxrs.definition.RestBound;
 import org.apache.cxf.endpoint.jaxrs.definition.RestMethod;
 import org.apache.cxf.endpoint.jaxrs.definition.RestParam;
 
-import com.github.hiwepy.javassist.bytecode.CtAnnotationBuilder;
-import com.github.hiwepy.javassist.utils.JavassistUtils;
+import io.github.hiwepy.javassist.bytecode.CtAnnotationBuilder;
+import io.github.hiwepy.javassist.utils.JavassistUtils;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
