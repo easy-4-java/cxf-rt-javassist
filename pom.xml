@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.hiwepy</groupId>
 	<artifactId>cxf-rt-javassist</artifactId>
-	<version>4.0.x.20241003.RELEASE</version>
+	<version>1.0.x.20260630-SNAPSHOT</version>
 	<description>通过javassist生成基于cxf的jaxws、jaxrs实现 </description>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/hiwepy/${project.artifactId}</url>
