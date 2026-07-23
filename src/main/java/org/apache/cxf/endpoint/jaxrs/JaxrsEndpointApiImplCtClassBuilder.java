@@ -9,7 +9,7 @@ import org.apache.cxf.endpoint.jaxrs.definition.RestMethod;
 import org.apache.cxf.endpoint.jaxrs.definition.RestParam;
 import org.apache.cxf.endpoint.utils.JaxrsEndpointApiUtils;
 
-import com.github.hiwepy.javassist.utils.ClassPoolFactory;
+import io.github.easy4j.javassist.utils.ClassPoolFactory;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;

@@ -14,7 +14,7 @@ import org.apache.cxf.endpoint.jaxws.definition.SoapResult;
 import org.apache.cxf.endpoint.jaxws.definition.SoapService;
 import org.apache.cxf.endpoint.utils.JaxwsEndpointApiUtils;
 
-import com.github.hiwepy.javassist.utils.ClassPoolFactory;
+import io.github.easy4j.javassist.utils.ClassPoolFactory;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;

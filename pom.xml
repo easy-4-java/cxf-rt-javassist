@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.hiwepy</groupId>
+	<groupId>io.github.easy4j</groupId>
 	<artifactId>cxf-rt-javassist</artifactId>
 	<version>4.0.x.20241003.RELEASE</version>
 	<description>通过javassist生成基于cxf的jaxws、jaxrs实现 </description>
 	<name>${project.groupId}:${project.artifactId}</name>
-	<url>https://github.com/hiwepy/${project.artifactId}</url>
+	<url>https://github.com/easy-4-java/${project.artifactId}</url>
 	<packaging>jar</packaging>
 
 	<licenses>
@@ -19,9 +19,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:https:github.com/hiwepy/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:https:github.com/hiwepy/${project.artifactId}.git</developerConnection>
-		<url>https:github.com/hiwepy/${project.artifactId}</url>
+		<connection>scm:git:https:github.com/easy-4-java/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:https:github.com/easy-4-java/${project.artifactId}.git</developerConnection>
+		<url>https:github.com/easy-4-java/${project.artifactId}</url>
 		<tag>${project.artifactId}</tag>
 	</scm>
 
@@ -204,7 +204,7 @@
 							</manifest>
 							<manifestEntries>
 								<Can-Redefine-Classes>true</Can-Redefine-Classes>
-								<Premain-Class>com.github.hiwepy.javassist.MyAgent2</Premain-Class>
+								<Premain-Class>io.github.easy4j.javassist.MyAgent2</Premain-Class>
 							</manifestEntries>
 						</archive>
 					</configuration>
@@ -472,9 +472,9 @@
 				<artifactId>javassist</artifactId>
 				<version>${javassist.version}</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/com.github.hiwepy/javassist-plus -->
+			<!-- https://mvnrepository.com/artifact/io.github.easy4j/javassist-plus -->
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
+				<groupId>io.github.easy4j</groupId>
 				<artifactId>javassist-plus</artifactId>
 				<version>${javassist-plus.version}</version>
 			</dependency>
@@ -530,7 +530,7 @@
 			<artifactId>javassist</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.hiwepy</groupId>
+			<groupId>io.github.easy4j</groupId>
 			<artifactId>javassist-plus</artifactId>
 		</dependency>
 

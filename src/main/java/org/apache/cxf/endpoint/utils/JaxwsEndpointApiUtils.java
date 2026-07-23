@@ -38,8 +38,8 @@ import org.apache.cxf.endpoint.jaxws.definition.SoapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.hiwepy.javassist.bytecode.CtAnnotationBuilder;
-import com.github.hiwepy.javassist.utils.JavassistUtils;
+import io.github.easy4j.javassist.bytecode.CtAnnotationBuilder;
+import io.github.easy4j.javassist.utils.JavassistUtils;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
