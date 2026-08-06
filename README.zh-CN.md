@@ -2,7 +2,7 @@
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)
+[![Java](https://img.shields.io/badge/Java-8-orange)](https://github.com/easy-4-java/cxf-rt-javassist) [![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
 
 > 使用 [Javassist](https://www.javassist.org) 生成基于 Apache CXF 的 JAX-WS /
 > JAX-RS 实现：流式 `CtClass` 构建器在运行时产出带 `@WebService` / JAX-RS 注解的
