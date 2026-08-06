@@ -1,6 +1,8 @@
 # cxf-rt-javassist
 
-[![Java](https://img.shields.io/badge/Java-8-orange)] [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[English](./README.md) | [简体中文](./README.zh-CN.md)
+
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
 > Generate Apache CXF JAX-WS / JAX-RS implementations with
 > [Javassist](https://www.javassist.org): fluent `CtClass` builders that produce
