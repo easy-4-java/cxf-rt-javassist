@@ -2,7 +2,7 @@
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)
+[![Java](https://img.shields.io/badge/Java-21-orange)](https://github.com/easy-4-java/cxf-rt-javassist) [![License](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
 
 > Generate Apache CXF JAX-WS / JAX-RS implementations with
 > [Javassist](https://www.javassist.org): fluent `CtClass` builders that produce
