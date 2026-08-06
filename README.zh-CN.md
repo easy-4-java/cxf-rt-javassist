@@ -1,6 +1,8 @@
 # cxf-rt-javassist
 
-[![Java](https://img.shields.io/badge/Java-21-orange)] [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[English](./README.md) | [简体中文](./README.zh-CN.md)
+
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
 > 使用 [Javassist](https://www.javassist.org) 生成基于 Apache CXF 的 JAX-WS /
 > JAX-RS 实现：流式 `CtClass` 构建器在运行时产出带 `@WebService` / JAX-RS 注解的
@@ -19,8 +21,6 @@
 - [9. 测试与构建](#9-测试与构建)
 - [10. 版本与分支](#10-版本与分支)
 - [11. 贡献与许可](#11-贡献与许可)
-
-[English](./README.md) | [简体中文](./README.zh-CN.md)
 
 ## 1. 项目概述
 
