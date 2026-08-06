@@ -254,7 +254,7 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 	
 	/**
 	 * 
-	 * @author 		： <a href="https://github.com/hiwepy">hiwepy</a>
+	 * @author [@Loong Wan](https://github.com/loong10k)
 	 * @param methodName 	：方法名称
 	 * @param bound			：方法绑定数据信息
 	 * @param params		： 参数信息
