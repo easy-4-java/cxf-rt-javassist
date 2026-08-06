@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2018, Loong Wan (https://github.com/loong10k).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -232,7 +232,7 @@ public class JaxwsEndpointApiUtils {
 	/**
 	 * 
 	 * 为方法添加 @WebMethod、 @WebResult、@WebBound、@WebParam 注解
-	 * @author 		： <a href="https://github.com/hiwepy">hiwepy</a>
+	 * @author [@Loong Wan](https://github.com/loong10k)
 	 * @param ctMethod			: {@link CtMethod} instance
 	 * @param constPool			: {@link ConstPool} instance
 	 * @param result			: {@link SoapResult} instance
