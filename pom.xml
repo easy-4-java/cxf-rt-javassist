@@ -523,7 +523,7 @@
         <commons-io.version>2.22.0</commons-io.version>
         <cxf.version>4.0.5</cxf.version>
         <javassist.version>3.30.2-GA</javassist.version>
-        <easy4j-javassist-plus.version>2.0.x.20260630-SNAPSHOT</easy4j-javassist-plus.version>
+        <easy4j-javassist-extension.version>2.0.x.20260630-SNAPSHOT</easy4j-javassist-extension.version>
         <!-- Dependency versions -->
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
@@ -589,11 +589,11 @@
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/javassist-plus — easy4j javassist-plus -->
+            <!-- Source: https://github.com/easy-4-java/javassist-extension — easy4j javassist-extension -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>javassist-plus</artifactId>
-                <version>${easy4j-javassist-plus.version}</version>
+                <artifactId>javassist-extension</artifactId>
+                <version>${easy4j-javassist-extension.version}</version>
             </dependency>
             <!-- For Lombok -->
             <dependency>
@@ -652,10 +652,10 @@
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
         </dependency>
-        <!-- Source: https://github.com/easy-4-java/javassist-plus — easy4j javassist-plus -->
+        <!-- Source: https://github.com/easy-4-java/javassist-extension — easy4j javassist-extension -->
         <dependency>
             <groupId>io.github.easy4j</groupId>
-            <artifactId>javassist-plus</artifactId>
+            <artifactId>javassist-extension</artifactId>
         </dependency>
         <!-- For Lombok -->
         <dependency>
