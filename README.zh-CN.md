@@ -36,7 +36,7 @@ CXF JAX-WS / JAX-RS 端点实现。两个流式构建器把声明式描述转换
 生成的类继承共享的 `EndpointApi` 基类；通过 `toInstance(InvocationHandler)` 可得到
 方法调用被分发给自定义处理器的实例——非常适合代理 / 可插拔端点逻辑。
 
-构建器依赖姊妹库 `io.github.easy4j:javassist-plus`（`CtFieldBuilder`、
+构建器依赖姊妹库 `io.github.easy4j:javassist-extension`（`CtFieldBuilder`、
 `ClassPoolFactory`、`JavassistUtils`）。
 
 它不是：
@@ -72,7 +72,7 @@ CXF JAX-WS / JAX-RS 端点实现。两个流式构建器把声明式描述转换
 | Maven | 3.0+（enforcer 强制；项目内置 Maven Wrapper `./mvnw`） |
 | Apache CXF | 4.x（`cxf-rt-frontend-jaxws` / `cxf-rt-frontend-jaxrs`，由本 pom 管理） |
 | Javassist | 3.30.2-GA（由本 pom 管理） |
-| 姊妹库 | `io.github.easy4j:javassist-plus`（同一版本线） |
+| 姊妹库 | `io.github.easy4j:javassist-extension`（同一版本线） |
 
 版本线：
 
