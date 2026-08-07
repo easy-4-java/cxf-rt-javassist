@@ -39,7 +39,7 @@ Generated classes extend the shared `EndpointApi` base class; with
 `toInstance(InvocationHandler)` the builder returns an instance whose method calls
 are dispatched to your handler — ideal for proxied / pluggable endpoint logic.
 
-The builders rely on the `io.github.easy4j:javassist-plus` companion library
+The builders rely on the `io.github.easy4j:javassist-extension` companion library
 (`CtFieldBuilder`, `ClassPoolFactory`, `JavassistUtils`).
 
 What it is **not**:
@@ -76,7 +76,7 @@ Typical scenarios:
 | Maven | 3.0+ (enforced; Maven Wrapper `./mvnw` included) |
 | Apache CXF | 4.x (`cxf-rt-frontend-jaxws` / `cxf-rt-frontend-jaxrs`, managed by this pom) |
 | Javassist | 3.30.2-GA (managed by this pom) |
-| Companion library | `io.github.easy4j:javassist-plus` (same version line) |
+| Companion library | `io.github.easy4j:javassist-extension` (same version line) |
 
 Version lines:
 
