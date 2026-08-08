@@ -18,35 +18,87 @@ package org.apache.cxf.endpoint.jaxws.definition;
 import jakarta.jws.WebParam.Mode;
 
 /**
- * 注释用于定制从单个参数至 Web Service 消息部件和 XML 元素的映射。将此注释应用于客户机或服务器服务端点接口（SEI）上的方法，或者应用于 JavaBeans 端点的服务器端点实现类。
- * https://www.cnblogs.com/zhao-shan/p/5515174.html
+ * Descriptor for a single JAX-WS endpoint method parameter that the
+ * generated builder will translate into a {@code @WebParam} annotation.
+ *
+ * <p>The descriptor carries the {@linkplain #getType() parameter type},
+ * {@linkplain #getName() parameter name}, optional
+ * {@linkplain #getPartName() part name},
+ * {@linkplain #getTargetNamespace() target namespace},
+ * {@linkplain #getMode() mode} and a
+ * {@linkplain #isHeader() header} flag.</p>
+ *
+ * @param <T> the runtime type of the parameter.
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see jakarta.jws.WebParam
  */
 public class SoapParam<T> {
 
+    /**
+     * Builds a parameter descriptor with type and name; mode defaults
+     * to {@code IN}, header to {@code false}.
+     *
+     * @param type runtime type of the parameter.
+     * @param name logical parameter name.
+     */
 	public SoapParam(Class<T> type, String name) {
 		this.type = type;
 		this.name = name;
 	}
-	
+
+    /**
+     * Builds a parameter descriptor with an explicit header flag.
+     *
+     * @param type   runtime type of the parameter.
+     * @param name   logical parameter name.
+     * @param header whether the parameter is in the SOAP header.
+     */
 	public SoapParam(Class<T> type, String name, boolean header) {
 		this.type = type;
 		this.name = name;
 		this.header = header;
 	}
-	
+
+    /**
+     * Builds a parameter descriptor with an explicit mode.
+     *
+     * @param type runtime type of the parameter.
+     * @param name logical parameter name.
+     * @param mode parameter flow direction.
+     */
 	public SoapParam(Class<T> type, String name, Mode mode) {
 		this.type = type;
 		this.name = name;
 		this.mode = mode;
 	}
-	
+
+    /**
+     * Builds a parameter descriptor with explicit mode and header flag.
+     *
+     * @param type   runtime type of the parameter.
+     * @param name   logical parameter name.
+     * @param mode   parameter flow direction.
+     * @param header whether the parameter is in the SOAP header.
+     */
 	public SoapParam(Class<T> type, String name, Mode mode, boolean header) {
 		this.type = type;
 		this.name = name;
 		this.mode = mode;
 		this.header = header;
 	}
-	
+
+    /**
+     * Builds a fully specified parameter descriptor.
+     *
+     * @param type            runtime type of the parameter.
+     * @param name            logical parameter name.
+     * @param partName        the WSDL part name.
+     * @param targetNamespace XML namespace for the parameter element.
+     * @param mode            parameter flow direction.
+     * @param header          whether the parameter is in the SOAP
+     *                        header.
+     */
 	public SoapParam(Class<T> type, String name, String partName, String targetNamespace, Mode mode,
 			boolean header) {
 		this.type = type;
@@ -58,80 +110,141 @@ public class SoapParam<T> {
 	}
 
 	/**
-	 * 参数对象类型
+	 * Runtime type of the parameter; mandatory.
 	 */
 	private Class<T> type;
 	/**
-	 * 1、name ：参数的名称。如果操作是远程过程调用（RPC）类型并且未指定partName 属性，那么这是用于表示参数的 wsdl:part 属性的名称。
-	 * 如果操作是文档类型或者参数映射至某个头，那么 -name 是用于表示该参数的 XML 元素的局部名称。如果操作是文档类型、 参数类型为 BARE
-	 * 并且方式为 OUT 或 INOUT，那么必须指定此属性。（字符串）
+	 * Logical name of the parameter, surfaced as the {@code name}
+	 * attribute of the generated {@code @WebParam} annotation.
 	 */
 	private String name = "";
 	/**
-	 * 2、partName：定义用于表示此参数的 wsdl:part属性的名称。仅当操作类型为 RPC 或者操作是文档类型并且参数类型为BARE
-	 * 时才使用此参数。（字符串）
+	 * WSDL part name for this parameter. Only used when the operation
+	 * type is RPC or the operation is document type and the parameter
+	 * type is BARE. Defaults to an empty string.
 	 */
 	private String partName = "";
 	/**
-	 * 3、targetNamespace：指定参数的 XML 元素的 XML 名称空间。当属性映射至 XML 元素时，仅应用于文档绑定。缺省值为 Web
-	 * Service 的 targetNamespace。（字符串）
+	 * XML namespace for the parameter element. Only applies to
+	 * document bindings. Defaults to the Web Service target namespace.
 	 */
 	private String targetNamespace = "";
 	/**
-	 * 4、mode：此值表示此方法的参数流的方向。有效值为 IN、INOUT 和 OUT。（字符串）
+	 * Parameter flow direction. Defaults to {@code IN}.
 	 */
 	private jakarta.jws.WebParam.Mode mode = jakarta.jws.WebParam.Mode.IN;
 	/**
-	 * 5、header：指定参数是在消息头还是消息体中。缺省值为 false。（布尔值）
+	 * Whether the parameter is in the SOAP header rather than the body.
+	 * Defaults to {@code false}.
 	 */
 	private boolean header = false;
 
+    /**
+     * Returns the runtime type of the parameter.
+     *
+     * @return the parameter type.
+     */
 	public Class<T> getType() {
 		return type;
 	}
 
+    /**
+     * Replaces the runtime type of the parameter.
+     *
+     * @param type new parameter type.
+     */
 	public void setType(Class<T> type) {
 		this.type = type;
 	}
 
+    /**
+     * Returns the logical parameter name.
+     *
+     * @return the parameter name.
+     */
 	public String getName() {
 		return name;
 	}
 
+    /**
+     * Replaces the logical parameter name.
+     *
+     * @param name new parameter name.
+     */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+    /**
+     * Returns the WSDL part name.
+     *
+     * @return the part name, possibly empty.
+     */
 	public String getPartName() {
 		return partName;
 	}
 
+    /**
+     * Replaces the WSDL part name.
+     *
+     * @param partName new part name.
+     */
 	public void setPartName(String partName) {
 		this.partName = partName;
 	}
 
+    /**
+     * Returns the XML namespace for the parameter element.
+     *
+     * @return the target namespace, possibly empty.
+     */
 	public String getTargetNamespace() {
 		return targetNamespace;
 	}
 
+    /**
+     * Replaces the XML namespace for the parameter element.
+     *
+     * @param targetNamespace new target namespace.
+     */
 	public void setTargetNamespace(String targetNamespace) {
 		this.targetNamespace = targetNamespace;
 	}
 
+    /**
+     * Returns the parameter flow direction.
+     *
+     * @return the mode, never {@code null}.
+     */
 	public jakarta.jws.WebParam.Mode getMode() {
 		return mode;
 	}
 
+    /**
+     * Replaces the parameter flow direction.
+     *
+     * @param mode new mode.
+     */
 	public void setMode(jakarta.jws.WebParam.Mode mode) {
 		this.mode = mode;
 	}
 
+    /**
+     * Returns whether the parameter is in the SOAP header.
+     *
+     * @return {@code true} if the parameter is a header parameter.
+     */
 	public boolean isHeader() {
 		return header;
 	}
 
+    /**
+     * Sets whether the parameter is in the SOAP header.
+     *
+     * @param header {@code true} to place the parameter in the header.
+     */
 	public void setHeader(boolean header) {
 		this.header = header;
 	}
-	
+
 }

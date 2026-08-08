@@ -15,40 +15,73 @@
  */
 package org.apache.cxf.endpoint.jaxrs.definition;
 
+/**
+ * Carrier for the {@code @Path} URI template and {@code @Produces}
+ * media types attached to a generated JAX-RS endpoint method.
+ *
+ * <p>This value object bundles a required {@linkplain #getPath() URI
+ * template} together with the list of {@linkplain #getMediaTypes()
+ * produced media types}. It is consumed by the helpers in
+ * {@link org.apache.cxf.endpoint.utils.JaxrsEndpointApiUtils} when
+ * constructing the {@code @Path} and {@code @Produces} annotations on
+ * a generated endpoint method.</p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see jakarta.ws.rs.Path
+ * @see jakarta.ws.rs.Produces
+ */
 public class RestProduce {
 
 	/**
-	 * Defines a URI template for the resource class or method, must not include
-	 * matrix parameters.
+	 * Defines a URI template for the resource class or method, must
+	 * not include matrix parameters. Final because the path cannot be
+	 * changed after construction.
 	 */
 	private final String path;
 	/**
-	 * A list of media types. Each entry may specify a single type or consist of a
-	 * comma separated list of types, with any leading or trailing white-spaces in a
-	 * single type entry being ignored. For example:
-	 * 
-	 * <pre>
-	 * { "image/jpeg, image/gif ", " image/png" }
-	 * </pre>
-	 * 
-	 * Use of the comma-separated form allows definition of a common string constant
-	 * for use on multiple targets.
+	 * A list of media types. Each entry may specify a single type or
+	 * consist of a comma-separated list of types, with any leading or
+	 * trailing white-spaces in a single type entry being ignored.
+	 * Defaults to a single {@code *&#47;*} entry.
 	 */
 	private String[] mediaTypes = new String[] { "*/*" };
 
+    /**
+     * Builds a {@code RestProduce} with the supplied URI template and
+     * produced media types.
+     *
+     * @param path       URI template for the resource.
+     * @param mediaTypes media types produced by the resource.
+     */
 	public RestProduce(String path, String... mediaTypes) {
 		this.path = path;
 		this.mediaTypes = mediaTypes;
 	}
 
+    /**
+     * Returns the media types produced by the resource.
+     *
+     * @return the produced media types, never {@code null}.
+     */
 	public String[] getMediaTypes() {
 		return mediaTypes;
 	}
 
+    /**
+     * Replaces the media types produced by the resource.
+     *
+     * @param mediaTypes new produced media types.
+     */
 	public void setMediaTypes(String[] mediaTypes) {
 		this.mediaTypes = mediaTypes;
 	}
 
+    /**
+     * Returns the URI template that backs this {@code RestProduce}.
+     *
+     * @return the URI template.
+     */
 	public String getPath() {
 		return path;
 	}

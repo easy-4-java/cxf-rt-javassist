@@ -31,75 +31,139 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.annotation.Annotation;
 
 /**
- * 
- * 动态构建ws接口
- * <p> http://www.cnblogs.com/sunfie/p/5154246.html</p>
- * <p> http://blog.csdn.net/youaremoon/article/details/50766972</p>
- * <p> https://my.oschina.net/GameKing/blog/794580</p>
- * <p> http://wsmajunfeng.iteye.com/blog/1912983</p>
+ * Builder that creates a concrete JAX-WS endpoint class extending
+ * {@link EndpointApi} on top of a {@link ClassPool}.
+ *
+ * <p>The builder wires the standard JAX-WS metadata ({@code @WebService},
+ * {@code @WebBound}) onto the generated class and exposes a fluent API
+ * to add annotated methods, fields, and constructors. Each
+ * {@code new*} / {@code add*} method mutates the underlying
+ * {@link CtClass} in-place and returns {@code this}, so calls can be
+ * chained. The final class can be obtained as a {@link CtClass} through
+ * {@link #build()}, as a {@link Class} through {@link #toClass()}, or
+ * as an already-instantiated proxy through
+ * {@link #toInstance(InvocationHandler)}.</p>
+ *
+ * <p>This is the JAX-WS counterpart of
+ * {@link org.apache.cxf.endpoint.jaxrs.JaxrsEndpointApiCtClassBuilder}.</p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see JaxwsEndpointApiUtils
+ * @see JaxwsEndpointApiInterfaceCtClassBuilder
+ * @see JaxwsEndpointApiImplCtClassBuilder
  */
 public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
-	
-	// 构建动态类
+
+    /**
+     * Class pool used to resolve types and define the generated
+     * endpoint class. Configured by the constructors.
+     */
 	protected ClassPool pool = null;
+    /**
+     * {@link CtClass} representing the generated endpoint. Mutated in
+     * place by every fluent setter on this builder.
+     */
 	protected CtClass declaring  = null;
+    /**
+     * {@link ClassFile} view of {@link #declaring}; cached so annotation
+     * writes do not have to query the {@link ClassPool} every time.
+     */
 	protected ClassFile classFile = null;
 	//private Loader loader = new Loader(pool);
-	
+
+    /**
+     * Creates a new builder using the shared default {@link ClassPool}
+     * provided by {@link ClassPoolFactory#getDefaultPool()}.
+     *
+     * @param classname fully qualified name of the class to generate.
+     * @throws CannotCompileException if the generated class cannot be
+     *                                compiled by Javassist.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved in the pool.
+     */
 	public JaxwsEndpointApiCtClassBuilder(final String classname) throws CannotCompileException, NotFoundException  {
 		this(ClassPoolFactory.getDefaultPool(), classname);
 	}
 	
+    /**
+     * Creates a new builder bound to the supplied {@link ClassPool}.
+     *
+     * @param pool      pool used to resolve types and create the class.
+     * @param classname fully qualified name of the class to generate.
+     * @throws CannotCompileException if the generated class cannot be
+     *                                compiled by Javassist.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved in the pool.
+     */
 	public JaxwsEndpointApiCtClassBuilder(final ClassPool pool, final String classname) throws CannotCompileException, NotFoundException {
-		
+
 		this.pool = pool;
 		this.declaring = JaxwsEndpointApiUtils.makeClass(pool, classname);
 		this.declaring.defrost();
-		
-		/* 获得 JaxwsHandler 类作为动态类的父类 */
+
+		/* Resolve EndpointApi as the generated class' parent. */
 		CtClass superclass = pool.get(EndpointApi.class.getName());
 		declaring.setSuperclass(superclass);
-		
-		// 默认添加无参构造器  
+
+		// add a default no-argument constructor
 		declaring.addConstructor(CtNewConstructor.defaultConstructor(declaring));
-		
+
 		this.classFile = this.declaring.getClassFile();
 	}
-	
-	/**
-	 * 添加 @WebService 注解
-	 * @param name： 此属性的值包含XML Web Service的名称。在默认情况下，该值是实现XML Web Service的类的名称，wsdl:portType 的名称。缺省值为 Java 类或接口的非限定名称。（字符串）
-	 * @param targetNamespace：指定你想要的名称空间，默认是使用接口实现类的包名的反缀（字符串）
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+
+    /**
+     * Attaches a {@code @WebService} annotation with the supplied name
+     * and target namespace.
+     *
+     * @param name            the WSDL port type name.
+     * @param targetNamespace the XML namespace for the service.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder webService(final String name, final String targetNamespace) {
 		return this.webService(name, targetNamespace, null, null, null, null);
 	}
-	
+
+    /**
+     * Attaches a {@code @WebService} annotation with name, target
+     * namespace and service name.
+     *
+     * @param name            the WSDL port type name.
+     * @param targetNamespace the XML namespace for the service.
+     * @param serviceName     the WSDL service name.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder webService(final String name, final String targetNamespace, String serviceName) {
 		return this.webService(name, targetNamespace, serviceName, null, null, null);
 	}
-	
-	/**
-	 * 给动态类添加 @WebService 注解
-	 * @param name： 此属性的值包含XML Web Service的名称。在默认情况下，该值是实现XML Web Service的类的名称，wsdl:portType 的名称。缺省值为 Java 类或接口的非限定名称。（字符串）
-	 * @param targetNamespace：指定你想要的名称空间，默认是使用接口实现类的包名的反缀（字符串）
-	 * @param serviceName： 对外发布的服务名，指定 Web Service 的服务名称：wsdl:service。缺省值为 Java 类的简单名称 + Service。（字符串）
-	 * @param portName：  wsdl:portName。缺省值为 WebService.name+Port。（字符串）
-	 * @param wsdlLocation：指定用于定义 Web Service 的 WSDL 文档的 Web 地址。Web 地址可以是相对路径或绝对路径。（字符串）
-	 * @param endpointInterface： 服务接口全路径, 指定做SEI（Service EndPoint Interface）服务端点接口（字符串）
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+
+    /**
+     * Attaches a fully-specified {@code @WebService} annotation to the
+     * generated class.
+     *
+     * @param name               the WSDL port type name.
+     * @param targetNamespace    the XML namespace for the service.
+     * @param serviceName        the WSDL service name; defaults to the
+     *                           simple class name + {@code "Service"}.
+     * @param portName           the WSDL port name; defaults to
+     *                           {@code name + "Port"}.
+     * @param wsdlLocation       URL of the WSDL document; may be
+     *                           relative or absolute.
+     * @param endpointInterface  fully qualified name of the SEI.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder webService(final String name, final String targetNamespace, String serviceName,
 			String portName, String wsdlLocation, String endpointInterface) {
 		return webService(new SoapService(name, targetNamespace, serviceName, portName, wsdlLocation, endpointInterface));
 	}
-	
-	/**
-	 * 添加类注解 @WebService
-	 * @param service			: {@link SoapService} instance
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+
+    /**
+     * Attaches a {@code @WebService} annotation derived from the
+     * supplied descriptor.
+     *
+     * @param service descriptor carrying the Web Service attributes.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder webService(final SoapService service) {
 
 		ConstPool constPool = this.classFile.getConstPool();
@@ -109,14 +173,16 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 
-	/**
-	 * 添加类注解 @WebServiceProvider
-	 * @param wsdlLocation			: The value of wsdlLocation
-	 * @param serviceName			: The value of serviceName
-	 * @param targetNamespace		: The value of targetNamespace
-	 * @param portName				: The value of portName
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+    /**
+     * Attaches a {@code @WebServiceProvider} annotation to the
+     * generated class.
+     *
+     * @param wsdlLocation    URL of the WSDL document.
+     * @param serviceName     the WSDL service name.
+     * @param targetNamespace the XML namespace for the service.
+     * @param portName        the WSDL port name.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder webServiceProvider(String wsdlLocation, String serviceName,
 			String targetNamespace, String portName) {
 
@@ -128,13 +194,14 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 
-	/**
-	 * 添加类注解 @Addressing
-	 * @param enabled			: The value of enabled
-	 * @param required			: The value of required
-	 * @param responses			: The {@link Responses}
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+    /**
+     * Attaches an {@code @Addressing} annotation to the generated class.
+     *
+     * @param enabled   whether WS-Addressing is enabled.
+     * @param required  whether WS-Addressing is required.
+     * @param responses the addressing responses policy.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder addressing(final boolean enabled, final boolean required,
 			final Responses responses) {
 		
@@ -145,11 +212,12 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 	
-	/**
-	 * 添加类注解 @ServiceMode
-	 * @param mode			: The mode of {@link Service}
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+    /**
+     * Attaches a {@code @ServiceMode} annotation to the generated class.
+     *
+     * @param mode the service mode ({@code PAYLOAD} or {@code MESSAGE}).
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder serviceMode(final Service.Mode mode) {
 		
 		ConstPool constPool = this.classFile.getConstPool();
@@ -159,21 +227,25 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 	
-	/**
-	 * 通过给动态类增加 <code>@WebBound</code>注解实现，数据的绑定
-	 * @param uid			: The value of uid
-	 * @param json			: The value of json
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+    /**
+     * Attaches a {@code @WebBound} annotation with the supplied primary
+     * key and JSON payload.
+     *
+     * @param uid  primary key for the bound target.
+     * @param json JSON payload that backs the bound target.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder bind(final String uid, final String json) {
 		return bind(new SoapBound(uid, json));
 	}
-	
-	/**
-	 * 通过给动态类增加 <code>@WebBound</code>注解实现，数据的绑定
-	 * @param bound			: The {@link SoapBound} instance
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance
-	 */
+
+    /**
+     * Attaches a {@code @WebBound} annotation derived from the supplied
+     * descriptor.
+     *
+     * @param bound descriptor carrying the bound values.
+     * @return this builder for chaining.
+     */
 	public JaxwsEndpointApiCtClassBuilder bind(final SoapBound bound) {
 
 		ConstPool constPool = this.classFile.getConstPool();
@@ -204,11 +276,34 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 	
+    /**
+     * Adds a strongly typed field initialised with the supplied value
+     * via the {@link CtFieldBuilder} helper.
+     *
+     * @param fieldClass runtime type of the new field.
+     * @param fieldName  simple name of the new field.
+     * @param fieldValue initial value expressed as a Java expression
+     *                   evaluated inside the generated class.
+     * @param <T>        type of the new field.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the initialiser cannot be
+     *                                compiled.
+     * @throws NotFoundException      if the field type cannot be
+     *                                resolved.
+     */
 	public <T> JaxwsEndpointApiCtClassBuilder newField(final Class<T> fieldClass, final String fieldName, final String fieldValue) throws CannotCompileException, NotFoundException {
 		CtFieldBuilder.create(declaring, this.pool.get(fieldClass.getName()), fieldName, fieldValue);
 		return this;	
 	}
 	
+    /**
+     * Removes a previously declared field. If the field does not exist
+     * the call is a no-op.
+     *
+     * @param fieldName simple name of the field to remove.
+     * @return this builder for chaining.
+     * @throws NotFoundException if the field lookup fails unexpectedly.
+     */
 	public <T> JaxwsEndpointApiCtClassBuilder removeField(final String fieldName) throws NotFoundException {
 		
 		// 检查字段是否已经定义
@@ -239,45 +334,57 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 	
-	/**
-	 * 
-	 * 根据参数构造一个新的方法
-	 * @param methodName 	：方法名称
-	 * @param params		： 参数信息
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance 
-	 * @throws CannotCompileException if can't compile
-	 * @throws NotFoundException  if not found
-	 */
+    /**
+     * Convenience overload that creates a method with no return type
+     * or binding, identified only by its operation name.
+     *
+     * @param methodName the WSDL operation name.
+     * @param params     method-level parameters.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated body cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public JaxwsEndpointApiCtClassBuilder newMethod(final String methodName, SoapParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.newMethod(null, new SoapMethod(methodName), null, params);
 	}
-	
-	/**
-	 * 
-	 * @author [@Loong Wan](https://github.com/loong10k)
-	 * @param methodName 	：方法名称
-	 * @param bound			：方法绑定数据信息
-	 * @param params		： 参数信息
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance 
-	 * @throws CannotCompileException if can't compile
-	 * @throws NotFoundException  if not found
-	 */
+
+    /**
+     * Convenience overload with a method-level binding but no return
+     * type.
+     *
+     * @param methodName the WSDL operation name.
+     * @param bound      method-level binding.
+     * @param params     method-level parameters.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated body cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public JaxwsEndpointApiCtClassBuilder newMethod( final String methodName, final SoapBound bound, SoapParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.newMethod(null, new SoapMethod(methodName), bound, params);
 	}
-	
-	/**
-	 * 
-	 * 根据参数构造一个新的方法
-	 * @param result ：返回结果信息
-	 * @param method ：方法注释信息
-	 * @param bound  ：方法绑定数据信息
-	 * @param params ： 参数信息
-	 * @param <T> 	   ： 参数泛型
-	 * @return {@link JaxwsEndpointApiCtClassBuilder} instance 
-	 * @throws CannotCompileException if can't compile
-	 * @throws NotFoundException  if not found
-	 */ 
+
+    /**
+     * Adds a fully-described JAX-WS method (operation, result, binding,
+     * and parameters) to the generated class. The generated body
+     * dispatches every invocation through the configured
+     * {@link InvocationHandler}.
+     *
+     * @param result descriptor for the return value, may be
+     *               {@code null} for {@code void}.
+     * @param method descriptor carrying the operation name.
+     * @param bound  method-level binding, may be {@code null}.
+     * @param params method-level parameters.
+     * @param <T>    return type parameter.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated body cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public <T> JaxwsEndpointApiCtClassBuilder newMethod(final SoapResult<T> result, final SoapMethod method, final SoapBound bound, SoapParam<?>... params) throws CannotCompileException, NotFoundException {
 	       
 		ConstPool constPool = this.classFile.getConstPool();
@@ -307,6 +414,18 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
         return this;
 	}
 	
+    /**
+     * Removes a previously declared method. If the method does not
+     * exist the call is a no-op.
+     *
+     * @param methodName simple name of the method to remove.
+     * @param params     parameter descriptors used to disambiguate
+     *                   overloaded methods; may be empty.
+     * @param <T>        unused generic parameter kept for symmetry.
+     * @return this builder for chaining.
+     * @throws NotFoundException if the method lookup fails
+     *                           unexpectedly.
+     */
 	public <T> JaxwsEndpointApiCtClassBuilder removeMethod(final String methodName, SoapParam<?>... params) throws NotFoundException {
 		
 		// 有参方法
@@ -337,28 +456,59 @@ public class JaxwsEndpointApiCtClassBuilder implements Builder<CtClass> {
 		return this;
 	}
 	
+    /**
+     * Returns the underlying {@link CtClass} so the caller can perform
+     * additional Javassist-level manipulations or feed it to
+     * {@link #toClass()} / {@link #toInstance(InvocationHandler)}.
+     *
+     * @return the live {@link CtClass} handled by this builder.
+     */
 	@Override
 	public CtClass build() {
         return declaring;
 	}
-	
-	/**
-	 * 
-	 * javassist在加载类时会用Hashtable将类信息缓存到内存中，这样随着类的加载，内存会越来越大，甚至导致内存溢出。
-	 * 如果应用中要加载的类比较多，建议在使用完CtClass之后删除缓存
-	 * @return The Class 
-	 * @throws CannotCompileException if can't compile
-	 */
+
+    /**
+     * Resolves the generated class through the current class loader and
+     * detaches the {@link CtClass} from the pool so the in-memory cache
+     * does not grow unbounded.
+     *
+     * @return the generated {@link Class}.
+     * @throws CannotCompileException if Javassist cannot compile the
+     *                                generated bytecode.
+     */
 	public Class<?> toClass() throws CannotCompileException {
         try {
-        	// 通过类加载器加载该CtClass
 			return declaring.toClass();
 		} finally {
-			// 将该class从ClassPool中删除
 			declaring.detach();
-		} 
+		}
 	}
-	
+
+    /**
+     * Adds an {@link InvocationHandler}-accepting constructor, loads the
+     * generated class, instantiates it through the new constructor and
+     * detaches the {@link CtClass}.
+     *
+     * @param handler handler that will receive every dispatched
+     *                invocation.
+     * @return the freshly instantiated proxy.
+     * @throws CannotCompileException     if the constructor body cannot
+     *                                    be compiled.
+     * @throws NotFoundException          if a referenced type cannot be
+     *                                    resolved.
+     * @throws InstantiationException     if the generated class cannot
+     *                                    be instantiated.
+     * @throws IllegalAccessException     if the constructor is not
+     *                                    accessible.
+     * @throws IllegalArgumentException   if the supplied arguments do
+     *                                    not match the constructor.
+     * @throws InvocationTargetException  if the constructor throws.
+     * @throws NoSuchMethodException      if the generated constructor
+     *                                    is missing.
+     * @throws SecurityException          if a security manager refuses
+     *                                    reflective access.
+     */
 	public Object toInstance(final InvocationHandler handler) throws CannotCompileException, NotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         try {
         	// 设置InvocationHandler参数构造器
