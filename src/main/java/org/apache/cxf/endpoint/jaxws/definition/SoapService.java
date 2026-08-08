@@ -15,52 +15,101 @@
  */
 package org.apache.cxf.endpoint.jaxws.definition;
 
+/**
+ * Descriptor for the {@code @WebService} annotation attributes attached
+ * to a generated JAX-WS endpoint class.
+ *
+ * <p>The descriptor bundles the mandatory {@linkplain #getName() name}
+ * and {@linkplain #getTargetNamespace() target namespace} together with
+ * optional {@linkplain #getServiceName() service name},
+ * {@linkplain #getPortName() port name},
+ * {@linkplain #getWsdlLocation() WSDL location} and
+ * {@linkplain #getEndpointInterface() endpoint interface}.</p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see jakarta.jws.WebService
+ */
 public class SoapService {
 
 	/**
-	 * 此属性的值包含XML Web Service的名称。在默认情况下，该值是实现XML Web Service的类的名称，wsdl:portType
-	 * 的名称。缺省值为 Java 类或接口的非限定名称。（字符串）
+	 * WSDL port type name. Defaults to the simple class name.
 	 */
 	private final String name;
 	/**
-	 * 指定你想要的名称空间，默认是使用接口实现类的包名的反缀（字符串）
+	 * XML namespace for the service. Defaults to the reversed package
+	 * name of the implementation class.
 	 */
 	private final String targetNamespace;
 	/**
-	 * 对外发布的服务名，指定 Web Service 的服务名称：wsdl:service。缺省值为 Java 类的简单名称 + Service。（字符串）
+	 * WSDL service name ({@code wsdl:service}). Defaults to the simple
+	 * class name + {@code "Service"}.
 	 */
 	private String serviceName;
 	/**
-	 * wsdl:portName。缺省值为 WebService.name+Port。（字符串）
+	 * WSDL port name ({@code wsdl:portName}). Defaults to
+	 * {@code name + "Port"}.
 	 */
 	private String portName;
 	/**
-	 * 指定用于定义 Web Service 的 WSDL 文档的 Web 地址。Web 地址可以是相对路径或绝对路径。（字符串）
+	 * URL of the WSDL document. May be relative or absolute.
 	 */
 	private String wsdlLocation;
 	/**
-	 * 服务接口全路径, 指定做SEI（Service EndPoint Interface）服务端点接口（字符串）
+	 * Fully qualified name of the Service Endpoint Interface (SEI).
 	 */
 	private String endpointInterface;
 
+    /**
+     * Builds a descriptor with the mandatory name and target namespace.
+     *
+     * @param name            the WSDL port type name.
+     * @param targetNamespace the XML namespace for the service.
+     */
 	public SoapService(String name, String targetNamespace) {
 		this.name = name;
 		this.targetNamespace = targetNamespace;
 	}
-	
+
+    /**
+     * Builds a descriptor with name, target namespace and service name.
+     *
+     * @param name            the WSDL port type name.
+     * @param targetNamespace the XML namespace for the service.
+     * @param serviceName     the WSDL service name.
+     */
 	public SoapService(String name, String targetNamespace, String serviceName) {
 		this.name = name;
 		this.targetNamespace = targetNamespace;
 		this.serviceName = serviceName;
 	}
-	
+
+    /**
+     * Builds a descriptor with name, target namespace, service name and
+     * port name.
+     *
+     * @param name            the WSDL port type name.
+     * @param targetNamespace the XML namespace for the service.
+     * @param serviceName     the WSDL service name.
+     * @param portName        the WSDL port name.
+     */
 	public SoapService(String name, String targetNamespace, String serviceName, String portName) {
 		this.name = name;
 		this.targetNamespace = targetNamespace;
 		this.serviceName = serviceName;
 		this.portName = portName;
 	}
-	
+
+    /**
+     * Builds a descriptor with name, target namespace, service name,
+     * port name and WSDL location.
+     *
+     * @param name            the WSDL port type name.
+     * @param targetNamespace the XML namespace for the service.
+     * @param serviceName     the WSDL service name.
+     * @param portName        the WSDL port name.
+     * @param wsdlLocation    URL of the WSDL document.
+     */
 	public SoapService(String name, String targetNamespace, String serviceName, String portName, String wsdlLocation) {
 		this.name = name;
 		this.targetNamespace = targetNamespace;
@@ -68,7 +117,17 @@ public class SoapService {
 		this.portName = portName;
 		this.wsdlLocation = wsdlLocation;
 	}
-	
+
+    /**
+     * Builds a fully specified descriptor with all attributes.
+     *
+     * @param name               the WSDL port type name.
+     * @param targetNamespace    the XML namespace for the service.
+     * @param serviceName        the WSDL service name.
+     * @param portName           the WSDL port name.
+     * @param wsdlLocation       URL of the WSDL document.
+     * @param endpointInterface  fully qualified name of the SEI.
+     */
 	public SoapService(String name, String targetNamespace, String serviceName, String portName, String wsdlLocation,
 			String endpointInterface) {
 		this.name = name;
@@ -79,42 +138,92 @@ public class SoapService {
 		this.endpointInterface = endpointInterface;
 	}
 
+    /**
+     * Returns the WSDL service name.
+     *
+     * @return the service name, possibly {@code null}.
+     */
 	public String getServiceName() {
 		return serviceName;
 	}
 
+    /**
+     * Replaces the WSDL service name.
+     *
+     * @param serviceName new service name.
+     */
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
 
+    /**
+     * Returns the WSDL port name.
+     *
+     * @return the port name, possibly {@code null}.
+     */
 	public String getPortName() {
 		return portName;
 	}
 
+    /**
+     * Replaces the WSDL port name.
+     *
+     * @param portName new port name.
+     */
 	public void setPortName(String portName) {
 		this.portName = portName;
 	}
 
+    /**
+     * Returns the URL of the WSDL document.
+     *
+     * @return the WSDL location, possibly {@code null}.
+     */
 	public String getWsdlLocation() {
 		return wsdlLocation;
 	}
 
+    /**
+     * Replaces the URL of the WSDL document.
+     *
+     * @param wsdlLocation new WSDL location.
+     */
 	public void setWsdlLocation(String wsdlLocation) {
 		this.wsdlLocation = wsdlLocation;
 	}
 
+    /**
+     * Returns the fully qualified name of the SEI.
+     *
+     * @return the endpoint interface, possibly {@code null}.
+     */
 	public String getEndpointInterface() {
 		return endpointInterface;
 	}
 
+    /**
+     * Replaces the fully qualified name of the SEI.
+     *
+     * @param endpointInterface new endpoint interface.
+     */
 	public void setEndpointInterface(String endpointInterface) {
 		this.endpointInterface = endpointInterface;
 	}
 
+    /**
+     * Returns the WSDL port type name.
+     *
+     * @return the name, never {@code null}.
+     */
 	public String getName() {
 		return name;
 	}
 
+    /**
+     * Returns the XML namespace for the service.
+     *
+     * @return the target namespace, never {@code null}.
+     */
 	public String getTargetNamespace() {
 		return targetNamespace;
 	}

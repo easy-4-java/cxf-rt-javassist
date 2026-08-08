@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+import static org.junit.Assert.*;
+
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.endpoint.jaxrs.definition.HttpMethodEnum;
@@ -79,49 +81,23 @@ public class JaxrsApiCtClassBuilder_Test {
 	
 	@Test
 	public void testInstance() throws Exception{
-		
+
 		InvocationHandler handler = new EndpointApiInvocationHandler();
-		
-		Object ctObject = new JaxrsEndpointApiCtClassBuilder("org.apache.cxf.spring.boot.FirstCaseV2")
+
+		CtClass ctClass = new JaxrsEndpointApiCtClassBuilder("org.apache.cxf.spring.boot.FirstCaseV2")
 				.path("getxx")
 				.makeField("public int k = 3;")
 				.newField(String.class, "uid", UUID.randomUUID().toString())
 				.newMethod(String.class, HttpMethodEnum.GET, "sayHello", "{id}/info" , new RestBound("ID01201"),new RestParam(String.class, "id", HttpParamEnum.PATH))
 				.newMethod(HttpMethodEnum.GET, "sayHello2", "{id}/info", new RestBound("ID01201") ,new RestParam(String.class, "text"))
-				.toInstance(handler);
-		
-		Class clazz = ctObject.getClass();
-		
-		System.err.println("=========Type Annotations======================");
-		for (Annotation element : clazz.getAnnotations()) {
-			System.out.println(element.toString());
-		}
-		
-		System.err.println("=========Fields======================");
-		for (Field element : clazz.getDeclaredFields()) {
-			System.out.println(element.getName());
-			for (Annotation anno : element.getAnnotations()) {
-				System.out.println(anno.toString());
-			}
-		}
-		System.err.println("=========Methods======================");
-		for (Method method : clazz.getDeclaredMethods()) {
-			System.out.println(method.getName());
-			System.err.println("=========Method Annotations======================");
-			for (Annotation anno : method.getAnnotations()) {
-				System.out.println(anno.toString());
-			}
-			System.err.println("=========Method Parameter Annotations======================");
-			for (Annotation[] anno : method.getParameterAnnotations()) {
-				System.out.println(anno[0].toString());
-			}
-		}
-		System.err.println("=========sayHello======================");
-		Method sayHello = clazz.getMethod("sayHello", String.class);
-		sayHello.invoke(ctObject,  " hi Hello " );
-		System.err.println("=========sayHello2======================");
-		Method sayHello2 = clazz.getMethod("sayHello2", String.class);
-		sayHello2.invoke(ctObject,  " hi Hello2 " );
+				.build();
+
+		assertNotNull(ctClass);
+		assertNotNull(ctClass.getDeclaredMethod("sayHello"));
+		assertNotNull(ctClass.getDeclaredMethod("sayHello2"));
+		assertNotNull(ctClass.getDeclaredField("k"));
+		assertNotNull(ctClass.getDeclaredField("uid"));
+		ctClass.detach();
 	}
 
 }

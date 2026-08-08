@@ -16,43 +16,65 @@
 package org.apache.cxf.endpoint.jaxws.definition;
 
 /**
- * 注释用于定制从返回值至 WSDL 部件或 XML 元素的映射。将此注释应用于客户机或服务器服务端点接口（SEI）上的方法，或者应用于 JavaBeans 端点的服务器端点实现类。
- * https://www.cnblogs.com/zhao-shan/p/5515174.html
+ * Descriptor for the return value of a JAX-WS endpoint method that the
+ * generated builder will translate into a {@code @WebResult} annotation.
+ *
+ * @param <T> the runtime type of the return value.
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see jakarta.jws.WebResult
  */
 public class SoapResult<T> {
 
 	/**
-	 * 返回结果对象类型
+	 * Runtime type of the return value; mandatory.
 	 */
 	private Class<T> rtClass;
-	
+
 	/**
-	 * 1、name：当返回值列示在 WSDL 文件中并且在连接上的消息中找到该返回值时，指定该返回值的名称。对于 RPC 绑定，这是用于表示返回值的
-	 * wsdl:part属性的名称。对于文档绑定，-name 参数是用于表示返回值的 XML 元素的局部名。对于 RPC 和 DOCUMENT/WRAPPED
-	 * 绑定，缺省值为 return。对于 DOCUMENT/BARE 绑定，缺省值为方法名 + Response。（字符串）
+	 * WSDL name for the return value. For RPC and DOCUMENT/WRAPPED
+	 * bindings, defaults to {@code "return"}.
 	 */
 	private String name = "";
 
 	/**
-	 * 2、targetNamespace：指定返回值的 XML 名称空间。仅当操作类型为 RPC 或者操作是文档类型并且参数类型为 BARE
-	 * 时才使用此参数。（字符串）
+	 * XML namespace for the return value element. Only used for RPC or
+	 * DOCUMENT/BARE operations.
 	 */
 	private String targetNamespace = "";
 
 	/**
-	 * 3、header：指定头中是否附带结果。缺省值为false。（布尔值）
+	 * Whether the result is carried in the SOAP header. Defaults to
+	 * {@code false}.
 	 */
 	private boolean header = false;
 	/**
-	 * 4、partName：指定 RPC 或 DOCUMENT/BARE 操作的结果的部件名称。缺省值为@WebResult.name。（字符串）
+	 * WSDL part name for the result. Only used for RPC or
+	 * DOCUMENT/BARE operations. Defaults to the {@code @WebResult}
+	 * name value.
 	 */
 	private String partName = "";
-	
+
+    /**
+     * Builds a result descriptor with the supplied type and name.
+     *
+     * @param rtClass runtime type of the return value.
+     * @param name    the WSDL result name.
+     */
 	public SoapResult(Class<T> rtClass, String name) {
 		this.rtClass = rtClass;
 		this.name = name;
 	}
-	
+
+    /**
+     * Builds a fully specified result descriptor.
+     *
+     * @param rtClass         runtime type of the return value.
+     * @param name            the WSDL result name.
+     * @param targetNamespace XML namespace for the result element.
+     * @param header          whether the result is in the SOAP header.
+     * @param partName        the WSDL part name for the result.
+     */
 	public SoapResult(Class<T> rtClass, String name, String targetNamespace, boolean header, String partName) {
 		this.rtClass = rtClass;
 		this.name = name;
@@ -61,42 +83,92 @@ public class SoapResult<T> {
 		this.partName = partName;
 	}
 
+    /**
+     * Returns the runtime type of the return value.
+     *
+     * @return the return type.
+     */
 	public Class<T> getRtClass() {
 		return rtClass;
 	}
 
+    /**
+     * Replaces the runtime type of the return value.
+     *
+     * @param rtClass new return type.
+     */
 	public void setRtClass(Class<T> rtClass) {
 		this.rtClass = rtClass;
 	}
 
+    /**
+     * Returns the WSDL result name.
+     *
+     * @return the result name.
+     */
 	public String getName() {
 		return name;
 	}
 
+    /**
+     * Replaces the WSDL result name.
+     *
+     * @param name new result name.
+     */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+    /**
+     * Returns the XML namespace for the result element.
+     *
+     * @return the target namespace, possibly empty.
+     */
 	public String getTargetNamespace() {
 		return targetNamespace;
 	}
 
+    /**
+     * Replaces the XML namespace for the result element.
+     *
+     * @param targetNamespace new target namespace.
+     */
 	public void setTargetNamespace(String targetNamespace) {
 		this.targetNamespace = targetNamespace;
 	}
 
+    /**
+     * Returns whether the result is in the SOAP header.
+     *
+     * @return {@code true} if the result is a header result.
+     */
 	public boolean isHeader() {
 		return header;
 	}
 
+    /**
+     * Sets whether the result is in the SOAP header.
+     *
+     * @param header {@code true} to place the result in the header.
+     */
 	public void setHeader(boolean header) {
 		this.header = header;
 	}
 
+    /**
+     * Returns the WSDL part name for the result.
+     *
+     * @return the part name, possibly empty.
+     */
 	public String getPartName() {
 		return partName;
 	}
 
+    /**
+     * Replaces the WSDL part name for the result.
+     *
+     * @param partName new part name.
+     */
 	public void setPartName(String partName) {
 		this.partName = partName;
 	}

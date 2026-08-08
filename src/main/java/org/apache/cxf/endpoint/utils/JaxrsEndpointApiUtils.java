@@ -61,8 +61,28 @@ import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
+/**
+ * Utility methods used by the JAX-RS endpoint builders to create
+ * Javassist classes, interfaces, constructors, methods, and
+ * annotations.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see org.apache.cxf.endpoint.jaxrs.JaxrsEndpointApiCtClassBuilder
+ */
 public class JaxrsEndpointApiUtils {
 
+    /**
+     * Creates or retrieves a concrete class in the supplied pool. If
+     * the class already exists the existing instance is returned.
+     *
+     * @param pool      the class pool.
+     * @param classname fully qualified name of the class.
+     * @return the created or retrieved {@link CtClass}.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     * @throws CannotCompileException if the class cannot be compiled.
+     */
 	public static CtClass makeClass(final ClassPool pool, final String classname)
 			throws NotFoundException, CannotCompileException {
 
@@ -80,22 +100,50 @@ public class JaxrsEndpointApiUtils {
 		return declaring;
 	}
 	
+    /**
+     * Creates a default no-argument constructor for the supplied class.
+     *
+     * @param declaring the class to add the constructor to.
+     * @return the created {@link CtConstructor}.
+     * @throws CannotCompileException if the constructor cannot be
+     *                                compiled.
+     */
 	public static CtConstructor defaultConstructor(final CtClass declaring) throws CannotCompileException   {
-		// 默认添加无参构造器  
-		CtConstructor cons = new CtConstructor(null, declaring);  
-		cons.setBody("{}");  
+		CtConstructor cons = new CtConstructor(null, declaring);
+		cons.setBody("{}");
     	return cons;
 	}
-	
-	public static CtConstructor makeConstructor(final ClassPool pool, final CtClass declaring) throws NotFoundException, CannotCompileException  {
 
-		// 添加有参构造器，注入回调接口
+    /**
+     * Creates a constructor that accepts an {@link InvocationHandler}
+     * and delegates to {@code super(handler)}.
+     *
+     * @param pool      the class pool.
+     * @param declaring the class to add the constructor to.
+     * @return the created {@link CtConstructor}.
+     * @throws NotFoundException      if {@code InvocationHandler}
+     *                                cannot be resolved.
+     * @throws CannotCompileException if the constructor cannot be
+     *                                compiled.
+     */
+	public static CtConstructor makeConstructor(final ClassPool pool, final CtClass declaring) throws NotFoundException, CannotCompileException  {
     	CtClass[] parameters = new CtClass[] {pool.get(InvocationHandler.class.getName())};
     	CtClass[] exceptions = new CtClass[] { pool.get("java.lang.Exception") };
     	return CtNewConstructor.make(parameters, exceptions, "{super($1);}", declaring);
-    	
 	}
 
+    /**
+     * Creates or retrieves an interface in the supplied pool. If the
+     * interface already exists the existing instance is returned.
+     *
+     * @param pool      the class pool.
+     * @param classname fully qualified name of the interface.
+     * @return the created or retrieved {@link CtClass}.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     * @throws CannotCompileException if the interface cannot be
+     *                                compiled.
+     */
 	public static CtClass makeInterface(final ClassPool pool, final String classname)
 			throws NotFoundException, CannotCompileException {
 
@@ -112,45 +160,62 @@ public class JaxrsEndpointApiUtils {
 	}
 	
 
+    /**
+     * Sets the superclass of the supplied class.
+     *
+     * @param pool      the class pool.
+     * @param declaring the class whose superclass to set.
+     * @param clazz     the Java class to use as superclass.
+     * @param <T>       the type of the superclass.
+     * @throws Exception if the superclass cannot be resolved or set.
+     */
 	public static <T> void setSuperclass(final ClassPool pool, final CtClass declaring, final Class<T> clazz)
 			throws Exception {
-
-		/* 获得 JaxwsHandler 类作为动态类的父类 */
 		CtClass superclass = pool.get(clazz.getName());
 		declaring.setSuperclass(superclass);
-
 	}
-	
+
+    /**
+     * Converts an array of {@link RestParam} descriptors into an array
+     * of {@link CtClass} parameter types.
+     *
+     * @param pool   the class pool.
+     * @param params the parameter descriptors; may be {@code null} or
+     *               empty.
+     * @return the resolved parameter types, or {@code null} when no
+     *         parameters are supplied.
+     * @throws NotFoundException if a parameter type cannot be resolved.
+     */
 	public static CtClass[] makeParams(final ClassPool pool, RestParam<?>... params) throws NotFoundException {
-		// 无参
 		if(params == null || params.length == 0) {
 			return null;
 		}
-		// 方法参数
 		CtClass[] parameters = new CtClass[params.length];
 		for(int i = 0;i < params.length; i++) {
 			parameters[i] = pool.get(params[i].getType().getName());
 		}
-
 		return parameters;
 	}
 	
-	/**
-	 * 构造  @Path 注解
-	 * @param constPool {@link ConstPool} instance
-	 * @param path the path
-	 * @return {@link Annotation} instance
-	 */
+    /**
+     * Builds a {@code @Path} annotation.
+     *
+     * @param constPool the constant pool.
+     * @param path      the URI template value.
+     * @return the constructed annotation.
+     */
 	public static Annotation annotPath(final ConstPool constPool, String path) {
 		return CtAnnotationBuilder.create(Path.class, constPool).addStringMember("value", path).build();
 	}
-	
-	/**
-	 * 构造  @Produces 注解
-	 * @param constPool {@link ConstPool} instance
-	 * @param mediaTypes the media types
-	 * @return {@link Annotation} instance
-	 */
+
+    /**
+     * Builds a {@code @Produces} annotation. When no media types are
+     * supplied the default {@code *&#47;*} value is used.
+     *
+     * @param constPool  the constant pool.
+     * @param mediaTypes the produced media types.
+     * @return the constructed annotation.
+     */
 	public static Annotation annotProduces(final ConstPool constPool, String... mediaTypes) {
 		
 		// 参数预处理
@@ -161,23 +226,20 @@ public class JaxrsEndpointApiUtils {
 		 
 	}
 	
-	/**
-	 * 为方法添加 @HttpMethod、 @GET、 @POST、 @PUT、 @DELETE、 @PATCH、 @HEAD、 @OPTIONS、@Path、、@Consumes、@Produces、@RestBound、@RestParam 注解
-	 * @author [@Loong Wan](https://github.com/loong10k)
-	 * @param ctMethod {@link CtMethod} instance
-	 * @param constPool {@link ConstPool} instance 
-	 * @param method {@link RestMethod} instance 
-	 * @param bound {@link RestBound} instance
-	 * @param params the params
-	 * @see HttpMethod
-	 * @see GET
-	 * @see POST
-	 * @see PUT
-	 * @see DELETE
-	 * @see PATCH
-	 * @see HEAD
-	 * @see OPTIONS
-	 */
+    /**
+     * Attaches all JAX-RS method-level and parameter-level annotations
+     * to the supplied method: {@code @HttpMethod}, {@code @Path},
+     * {@code @Consumes}, {@code @Produces}, {@code @WebBound}, and
+     * parameter annotations ({@code @QueryParam}, {@code @PathParam},
+     * etc.).
+     *
+     * @param ctMethod   the target method.
+     * @param constPool  the constant pool.
+     * @param method     the REST method descriptor.
+     * @param bound      the binding descriptor, may be {@code null}.
+     * @param params     the parameter descriptors; may be
+     *                   {@code null} or empty.
+     */
 	public static void methodAnnotations(final CtMethod ctMethod, final ConstPool constPool, final RestMethod method, final RestBound bound, RestParam<?>... params) {
 		
 		// 添加方法注解
@@ -218,12 +280,14 @@ public class JaxrsEndpointApiUtils {
         
 	}
 	
-	/**
-	 * 设置方法体
-	 * @param ctMethod {@link CtMethod} instance
-	 * @param method {@link RestMethod} instance 
-	 * @throws CannotCompileException  if can't compile
-	 */
+    /**
+     * Generates and sets the method body that dispatches calls through
+     * the configured {@link InvocationHandler}.
+     *
+     * @param ctMethod the target method.
+     * @param method   the REST method descriptor.
+     * @throws CannotCompileException if the body cannot be compiled.
+     */
 	public static void methodBody(final CtMethod ctMethod, final RestMethod method) throws CannotCompileException {
 		
 		// 构造方法体
@@ -240,27 +304,30 @@ public class JaxrsEndpointApiUtils {
         
 	}
 	
-	/**
-	 * 设置方法异常捕获逻辑
-	 * @param pool {@link ClassPool} instance 
-	 * @param ctMethod {@link CtMethod} instance
-	 * @throws NotFoundException  if not found
-	 * @throws CannotCompileException   if can't compile
-	 */
+    /**
+     * Adds a catch block that prints and re-throws any
+     * {@code Exception} thrown by the method body.
+     *
+     * @param pool    the class pool.
+     * @param ctMethod the target method.
+     * @throws NotFoundException      if {@code Exception} cannot be
+     *                                resolved.
+     * @throws CannotCompileException if the catch block cannot be
+     *                                compiled.
+     */
 	public static void methodCatch(final ClassPool pool, final CtMethod ctMethod) throws NotFoundException, CannotCompileException {
-		
-		// 构造异常处理逻辑
         CtClass etype = pool.get("java.lang.Exception");
         ctMethod.addCatch("{ System.out.println($e); throw $e; }", etype);
-        
 	}
-	
-	/**
-	 * 构造 @WebBound 注解
-	 * @param constPool {@link ConstPool} instance 
-	 * @param bound {@link RestBound} instance
-	 * @return {@link Annotation} instance
-	 */
+
+    /**
+     * Builds a {@code @WebBound} annotation from a JAX-RS bound
+     * descriptor.
+     *
+     * @param constPool the constant pool.
+     * @param bound     the bound descriptor.
+     * @return the constructed annotation.
+     */
 	public static Annotation annotWebBound(final ConstPool constPool, final RestBound bound) {
 		
 		CtAnnotationBuilder builder = CtAnnotationBuilder.create(WebBound.class, constPool).
@@ -272,12 +339,16 @@ public class JaxrsEndpointApiUtils {
 		
 	}
 	
-	/**
-	 * 根据参数 构造   @GET、 @POST、 @PUT、 @DELETE、 @PATCH、 @HEAD、 @OPTIONS 注解
-	 * @param constPool {@link ConstPool} instance 
-	 * @param method {@link RestMethod} instance
-	 * @return {@link Annotation} instance
-	 */
+    /**
+     * Builds the appropriate HTTP method annotation ({@code @GET},
+     * {@code @POST}, {@code @PUT}, {@code @DELETE}, {@code @PATCH},
+     * {@code @HEAD}, {@code @OPTIONS}) based on the verb carried by
+     * the descriptor.
+     *
+     * @param constPool the constant pool.
+     * @param method    the REST method descriptor.
+     * @return the constructed annotation.
+     */
 	public static Annotation annotHttpMethod(final ConstPool constPool, final RestMethod method) {
 		
 		Annotation annot = null;
@@ -311,12 +382,14 @@ public class JaxrsEndpointApiUtils {
 		return annot;
 	}
 	
-	/**
-	 * 构造 @Consumes 注解
-	 * @param constPool {@link ConstPool} instance 
-	 * @param consumes the consumes
-	 * @return {@link Annotation} instance
-	 */
+    /**
+     * Builds a {@code @Consumes} annotation. When no media types are
+     * supplied the default {@code *&#47;*} value is used.
+     *
+     * @param constPool the constant pool.
+     * @param consumes  the consumed media types.
+     * @return the constructed annotation.
+     */
 	public static Annotation annotConsumes(final ConstPool constPool, String... consumes) {
 		// 参数预处理
 		consumes = ArrayUtils.isEmpty(consumes) ? new String[] {"*/*"} : consumes;
@@ -325,12 +398,19 @@ public class JaxrsEndpointApiUtils {
 		return builder.build();
 	}
 	
-	/**
-	 * 构造 @BeanParam 、@CookieParam、@FormParam、@HeaderParam、@MatrixParam、@PathParam、@QueryParam 参数注解
-	 * @param constPool {@link ConstPool} instance 
-	 * @param params the params
-	 * @return {@link Annotation} Array
-	 */
+    /**
+     * Builds parameter-level annotations for each {@link RestParam}
+     * descriptor. The annotation type is determined by the parameter's
+     * {@link HttpParamEnum} binding source. When a default value is
+     * configured, a {@code @DefaultValue} annotation is appended.
+     *
+     * @param constPool the constant pool.
+     * @param params    the parameter descriptors; may be {@code null}
+     *                  or empty.
+     * @return a two-dimensional annotation array suitable for
+     *         {@link ParameterAnnotationsAttribute#setAnnotations(Annotation[][])},
+     *         or {@code null} when no parameters are supplied.
+     */
 	public static Annotation[][] annotParams(final ConstPool constPool, RestParam<?>... params) {
 
 		// 添加 @WebParam 参数注解
