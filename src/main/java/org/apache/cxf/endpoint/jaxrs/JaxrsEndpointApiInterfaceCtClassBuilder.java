@@ -23,44 +23,87 @@ import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 
 /**
- * 
- * 动态构建ws接口
- * <p>http://www.cnblogs.com/sunfie/p/5154246.html</p>
- * <p>http://blog.csdn.net/youaremoon/article/details/50766972</p>
- * <p>https://blog.csdn.net/tscyds/article/details/78415172</p>
- * <p>https://my.oschina.net/GameKing/blog/794580</p>
- * <p>http://wsmajunfeng.iteye.com/blog/1912983</p>
+ * Builder that creates a JAX-RS resource interface as a Javassist
+ * {@link CtClass}.
+ *
+ * <p>The generated interface extends {@link Cloneable} and exposes
+ * abstract methods annotated with the standard JAX-RS annotations
+ * ({@code @GET}, {@code @POST}, {@code @Path}, {@code @QueryParam},
+ * etc.). This builder is typically used together with
+ * {@link JaxrsEndpointApiImplCtClassBuilder} which generates the
+ * paired implementation class.</p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see JaxrsEndpointApiCtClassBuilder
+ * @see JaxrsEndpointApiImplCtClassBuilder
  */
 public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass> {
-	
-	// 构建动态类
+
+    /**
+     * Class pool used to resolve types and define the generated
+     * interface. Configured by the constructors.
+     */
 	private ClassPool pool = null;
+    /**
+     * {@link CtClass} representing the generated interface. Mutated in
+     * place by every fluent setter on this builder.
+     */
 	private CtClass declaring  = null;
+    /**
+     * {@link ClassFile} view of {@link #declaring}; cached so
+     * annotation writes do not have to query the {@link ClassPool}
+     * every time.
+     */
 	private ClassFile ccFile = null;
-	
+
 	//private Loader loader = new Loader(pool);
-	
+
+    /**
+     * Creates a new builder using the shared default {@link ClassPool}
+     * provided by {@link ClassPoolFactory#getDefaultPool()}.
+     *
+     * @param classname fully qualified name of the interface to
+     *                  generate.
+     * @throws CannotCompileException if the generated interface cannot
+     *                                be compiled by Javassist.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved in the pool.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder(final String classname) throws CannotCompileException, NotFoundException  {
 		this(ClassPoolFactory.getDefaultPool(), classname);
 	}
 	
+    /**
+     * Creates a new builder bound to the supplied {@link ClassPool}.
+     *
+     * @param pool      pool used to resolve types and create the
+     *                  interface.
+     * @param classname fully qualified name of the interface to
+     *                  generate.
+     * @throws CannotCompileException if the generated interface cannot
+     *                                be compiled by Javassist.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved in the pool.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder(final ClassPool pool, final String classname) throws CannotCompileException, NotFoundException {
-		
+
 		this.pool = pool;
 		this.declaring = JaxrsEndpointApiUtils.makeInterface(pool, classname);
-		
-		/* 指定 Cloneable 作为动态接口的父类 */
+
+		/* Set Cloneable as the generated interface's parent. */
 		CtClass superclass = pool.get(Cloneable.class.getName());
 		declaring.setSuperclass(superclass);
-		
+
 		this.ccFile = this.declaring.getClassFile();
 	}
-	
-	/**
-	 * 添加类注解 @Path
-	 * @param path : Defines a URI template for the resource class or method, must not include matrix parameters.
-	 * @return {@link JaxrsEndpointApiInterfaceCtClassBuilder} instance
-	 */
+
+    /**
+     * Attaches a {@code @Path} annotation to the generated interface.
+     *
+     * @param path URI template that defines the resource base path.
+     * @return this builder for chaining.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder path(final String path) {
 
 		ConstPool constPool = this.ccFile.getConstPool();
@@ -69,11 +112,14 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
 		return this;
 	}
 	
-	/**
-	 * 添加类注解 @Produces
-	 * @param mediaTypes the media types
-	 * @return {@link JaxrsEndpointApiInterfaceCtClassBuilder} instance
-	 */
+    /**
+     * Attaches a {@code @Produces} annotation to the generated
+     * interface. When no media types are supplied the default
+     * {@code *&#47;*} value is used.
+     *
+     * @param mediaTypes produced media types.
+     * @return this builder for chaining.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder produces(final String... mediaTypes) {
 
 		String[] noyNullMediaTypes = ArrayUtils.isNotEmpty(mediaTypes) ? mediaTypes : new String[] { "*/*" };
@@ -83,21 +129,25 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
 		return this;
 	}
 	
-	/**
-	 * 通过给动态类增加 <code>@WebBound</code>注解实现，数据的绑定
-	 * @param uid			: The value of uid
-	 * @param json			: The value of json
-	 * @return {@link JaxrsEndpointApiInterfaceCtClassBuilder} instance
-	 */
+    /**
+     * Attaches a {@code @WebBound} annotation with the supplied primary
+     * key and JSON payload.
+     *
+     * @param uid  primary key for the bound target.
+     * @param json JSON payload that backs the bound target.
+     * @return this builder for chaining.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder bind(final String uid, final String json) {
 		return bind(new RestBound(uid, json));
 	}
-	
-	/**
-	 * 通过给动态类增加 <code>@WebBound</code>注解实现，数据的绑定
-	 * @param bound			: The {@link RestBound} instance
-	 * @return {@link JaxrsEndpointApiInterfaceCtClassBuilder} instance
-	 */
+
+    /**
+     * Attaches a {@code @WebBound} annotation derived from the supplied
+     * descriptor.
+     *
+     * @param bound descriptor carrying the bound values.
+     * @return this builder for chaining.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder bind(final RestBound bound) {
 
 		ConstPool constPool = this.ccFile.getConstPool();
@@ -127,6 +177,19 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
 		return this;
 	}
 	
+    /**
+     * Adds a strongly typed field to the generated interface. If the
+     * field already exists, the call is a no-op.
+     *
+     * @param fieldClass runtime type of the new field.
+     * @param fieldName  simple name of the new field.
+     * @param fieldValue initial value expressed as a string literal.
+     * @param <T>        type of the new field.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the field cannot be compiled.
+     * @throws NotFoundException      if the field type cannot be
+     *                                resolved.
+     */
 	public <T> JaxrsEndpointApiInterfaceCtClassBuilder newField(final Class<T> fieldClass, final String fieldName, final String fieldValue) throws CannotCompileException, NotFoundException {
 		
 		// 检查字段是否已经定义
@@ -144,6 +207,14 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
 		return this;
 	}
 	
+    /**
+     * Removes a previously declared field. If the field does not exist
+     * the call is a no-op.
+     *
+     * @param fieldName simple name of the field to remove.
+     * @return this builder for chaining.
+     * @throws NotFoundException if the field lookup fails unexpectedly.
+     */
 	public <T> JaxrsEndpointApiInterfaceCtClassBuilder removeField(final String fieldName) throws NotFoundException {
 		
 		// 检查字段是否已经定义
@@ -156,26 +227,65 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
 		return this;
 	}
 	
+    /**
+     * Convenience overload that wraps the supplied arguments in a
+     * {@link RestMethod} and forwards to
+     * {@link #abstractMethod(Class, RestMethod, RestBound, RestParam[])}.
+     *
+     * @param rtClass return type of the generated method, may be
+     *                {@code null} for {@code void}.
+     * @param method  HTTP verb.
+     * @param name    Java method name.
+     * @param path    URI template appended to the resource path.
+     * @param bound   method-level binding or {@code null}.
+     * @param params  method-level parameters.
+     * @param <T>     return type parameter.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public <T> JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final Class<T> rtClass, final HttpMethodEnum method, final String name,final String path, final RestBound bound, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(rtClass , new RestMethod(method, name, path), bound, params);
 	}
-	
+
+    /**
+     * Convenience overload without a method-level binding.
+     *
+     * @param rtClass return type of the generated method.
+     * @param method  HTTP verb.
+     * @param name    Java method name.
+     * @param path    URI template appended to the resource path.
+     * @param params  method-level parameters.
+     * @param <T>     return type parameter.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public <T> JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final Class<T> rtClass, final HttpMethodEnum method, final String name,final String path, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(rtClass , new RestMethod(method, name, path), params);
 	}
-	
-	/**
-	 * 
-	 * 根据参数构造一个新的方法
-	 * @param rtClass ：对象类型
-	 * @param method ：方法注释信息
-	 * @param bound  ：方法绑定数据信息
-	 * @param params ： 参数信息
-	 * @param <T> 	   ： 参数泛型
-	 * @return {@link JaxrsEndpointApiInterfaceCtClassBuilder} instance 
-	 * @throws CannotCompileException if can't compile
-	 * @throws NotFoundException  if not found
-	 */ 
+
+    /**
+     * Adds a fully-described abstract REST method (verb, path, binding,
+     * and parameters) to the generated interface. The method will be
+     * annotated with the appropriate JAX-RS annotations.
+     *
+     * @param rtClass return type of the generated method, may be
+     *                {@code null} for {@code void}.
+     * @param method  descriptor carrying the verb, name and path.
+     * @param bound   method-level binding, may be {@code null}.
+     * @param params  method-level parameters.
+     * @param <T>     return type parameter.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public <T> JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final Class<T> rtClass, final RestMethod method, final RestBound bound, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 			      
 		ConstPool constPool = this.ccFile.getConstPool();
@@ -204,26 +314,103 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
         return this;
 	}
 	
+    /**
+     * Convenience overload without a method-level binding.
+     *
+     * @param rtClass return type of the generated method.
+     * @param method  descriptor carrying the verb, name and path.
+     * @param params  method-level parameters.
+     * @param <T>     return type parameter.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public <T> JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final Class<T> rtClass, final RestMethod method, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(rtClass, method, null, params);
 	}
-	
+
+    /**
+     * Convenience overload that omits the return type and the
+     * method-level binding.
+     *
+     * @param method HTTP verb.
+     * @param name   Java method name.
+     * @param path   URI template appended to the resource path.
+     * @param params method-level parameters.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final HttpMethodEnum method, final String name,final String path, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(null , new RestMethod(method, name, path), null, params);
 	}
-	
+
+    /**
+     * Convenience overload that omits the return type but keeps the
+     * method-level binding.
+     *
+     * @param method HTTP verb.
+     * @param name   Java method name.
+     * @param path   URI template appended to the resource path.
+     * @param bound  method-level binding.
+     * @param params method-level parameters.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final HttpMethodEnum method, final String name, final String path, final RestBound bound, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(null, new RestMethod(method, name, path), bound, params);
 	}
-	
+
+    /**
+     * Convenience overload that omits the return type.
+     *
+     * @param method descriptor carrying the verb, name and path.
+     * @param bound  method-level binding.
+     * @param params method-level parameters.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final RestMethod method, final RestBound bound, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(null, method, bound, params);
 	}
-	
+
+    /**
+     * Convenience overload that omits both the return type and the
+     * method-level binding.
+     *
+     * @param method descriptor carrying the verb, name and path.
+     * @param params method-level parameters.
+     * @return this builder for chaining.
+     * @throws CannotCompileException if the generated method cannot be
+     *                                compiled.
+     * @throws NotFoundException      if a referenced type cannot be
+     *                                resolved.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder abstractMethod(final RestMethod method, RestParam<?>... params) throws CannotCompileException, NotFoundException {
 		return this.abstractMethod(null, method, null, params);
 	}
-	
+
+    /**
+     * Removes a previously declared method. If the method does not
+     * exist the call is a no-op.
+     *
+     * @param methodName simple name of the method to remove.
+     * @param params     parameter descriptors used to disambiguate
+     *                   overloaded methods; may be empty.
+     * @return this builder for chaining.
+     * @throws NotFoundException if the method lookup fails
+     *                           unexpectedly.
+     */
 	public JaxrsEndpointApiInterfaceCtClassBuilder removeMethod(final String methodName, RestParam<?>... params) throws NotFoundException {
 		
 		// 有参方法
@@ -254,26 +441,33 @@ public class JaxrsEndpointApiInterfaceCtClassBuilder implements Builder<CtClass>
 		return this;
 	}
 	
+    /**
+     * Returns the underlying {@link CtClass} so the caller can perform
+     * additional Javassist-level manipulations or feed it to
+     * {@link #toClass()}.
+     *
+     * @return the live {@link CtClass} handled by this builder.
+     */
 	@Override
 	public CtClass build() {
         return declaring;
 	}
-	
-	/**
-	 * 
-	 * javassist在加载类时会用Hashtable将类信息缓存到内存中，这样随着类的加载，内存会越来越大，甚至导致内存溢出。
-	 * 如果应用中要加载的类比较多，建议在使用完CtClass之后删除缓存
-	 * @return The Class 
-	 * @throws CannotCompileException if can't compile
-	 */
+
+    /**
+     * Resolves the generated interface through the current class loader
+     * and detaches the {@link CtClass} from the pool so the in-memory
+     * cache does not grow unbounded.
+     *
+     * @return the generated {@link Class}.
+     * @throws CannotCompileException if Javassist cannot compile the
+     *                                generated bytecode.
+     */
 	public Class<?> toClass() throws CannotCompileException {
         try {
-        	// 通过类加载器加载该CtClass
 			return declaring.toClass();
 		} finally {
-			// 将该class从ClassPool中删除
 			declaring.detach();
-		} 
+		}
 	}
 
 }

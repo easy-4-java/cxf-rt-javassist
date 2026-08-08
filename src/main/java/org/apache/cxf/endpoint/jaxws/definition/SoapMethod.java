@@ -16,19 +16,43 @@
 package org.apache.cxf.endpoint.jaxws.definition;
 
 /**
- * 注释表示作为一项 Web Service 操作的方法，将此注释应用于客户机或服务器服务端点接口（SEI）上的方法，或者应用于 JavaBeans 端点的服务器端点实现类。
- * 要点： 仅支持在使用 @WebService 注释来注释的类上使用 @WebMethod 注释
- * https://www.cnblogs.com/zhao-shan/p/5515174.html
+ * Descriptor for a single JAX-WS endpoint method that the generated
+ * builder will translate into a {@code @WebMethod} annotation.
+ *
+ * <p>The descriptor bundles the {@linkplain #getOperationName()
+ * WSDL operation name}, an optional {@linkplain #getAction()
+ * SOAPAction}, and an {@linkplain #isExclude() exclude} flag.</p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
+ * @see jakarta.jws.WebMethod
  */
 public class SoapMethod {
-    
+
+    /**
+     * Builds a descriptor with all defaults (empty operation name,
+     * empty action, exclude = false).
+     */
     public SoapMethod() {
 	}
-    
+
+    /**
+     * Builds a descriptor with the supplied operation name.
+     *
+     * @param operationName the WSDL operation name.
+     */
     public SoapMethod(String operationName) {
 		this.operationName = operationName;
 	}
-    
+
+    /**
+     * Builds a fully specified descriptor.
+     *
+     * @param operationName the WSDL operation name.
+     * @param action        the SOAPAction value.
+     * @param exclude       whether to exclude this method from the
+     *                      service.
+     */
 	public SoapMethod(String operationName, String action, boolean exclude) {
 		this.operationName = operationName;
 		this.action = action;
@@ -36,40 +60,72 @@ public class SoapMethod {
 	}
 
 	/**
-	 * 1、operationName：指定与此方法相匹配的wsdl:operation 的名称。缺省值为 Java 方法的名称。（字符串）
+	 * WSDL operation name. Defaults to an empty string, which causes
+	 * the runtime to use the Java method name.
 	 */
 	private String operationName = "";
 
 	/**
-	 * 2、action：定义此操作的行为。对于 SOAP 绑定，此值将确定 SOAPAction 头的值。缺省值为 Java 方法的名称。（字符串）
+	 * SOAPAction value for this operation. Defaults to an empty string.
 	 */
 	private String action = "";
 
 	/**
-	 * 3、exclude：指定是否从 Web Service 中排除某一方法。缺省值为 false。（布尔值）  
+	 * Whether this method should be excluded from the Web Service.
+	 * Defaults to {@code false}.
 	 */
 	private boolean exclude = false;
 
+    /**
+     * Returns the WSDL operation name.
+     *
+     * @return the operation name, possibly empty.
+     */
 	public String getOperationName() {
 		return operationName;
 	}
 
+    /**
+     * Replaces the WSDL operation name.
+     *
+     * @param operationName new operation name.
+     */
 	public void setOperationName(String operationName) {
 		this.operationName = operationName;
 	}
 
+    /**
+     * Returns the SOAPAction value.
+     *
+     * @return the action, possibly empty.
+     */
 	public String getAction() {
 		return action;
 	}
 
+    /**
+     * Replaces the SOAPAction value.
+     *
+     * @param action new action.
+     */
 	public void setAction(String action) {
 		this.action = action;
 	}
 
+    /**
+     * Returns whether this method is excluded from the Web Service.
+     *
+     * @return {@code true} if the method is excluded.
+     */
 	public boolean isExclude() {
 		return exclude;
 	}
 
+    /**
+     * Sets whether this method should be excluded from the Web Service.
+     *
+     * @param exclude {@code true} to exclude the method.
+     */
 	public void setExclude(boolean exclude) {
 		this.exclude = exclude;
 	}

@@ -4,8 +4,17 @@ import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.Encoded;
 
 /**
- * 参数注解类型枚举
- * 
+ * Enumeration of the JAX-RS parameter-injection strategies supported by
+ * the generated REST endpoint builder.
+ *
+ * <p>Each constant maps to one of the standard {@code jakarta.ws.rs}
+ * parameter annotations and is used by the code-generation helpers to
+ * decide which annotation to attach to a generated method parameter.
+ * Use {@link RestParam#setFrom(HttpParamEnum)} to switch the binding
+ * source for a particular parameter.</p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 3.0.0
  * @see jakarta.ws.rs.BeanParam
  * @see jakarta.ws.rs.CookieParam
  * @see jakarta.ws.rs.HeaderParam
