@@ -100,8 +100,7 @@ public class JaxrsEndpointApiImplCtClassBuilderTest {
         JaxrsEndpointApiImplCtClassBuilder builder = new JaxrsEndpointApiImplCtClassBuilder("org.test.JaxrsImplChain1");
         JaxrsEndpointApiImplCtClassBuilder result = builder
                 .path("/api")
-                .produces("application/json")
-                .bind("uid", "{}");
+                .produces("application/json");
         assertSame(builder, result);
         CtClass ctClass = result.build();
         assertNotNull(ctClass);

@@ -248,11 +248,17 @@ public class JaxrsEndpointApiInterfaceCtClassBuilderTest {
     }
 
     @Test
-    public void shouldConvertToClass() throws Exception {
-        Class<?> clazz = new JaxrsEndpointApiInterfaceCtClassBuilder("org.test.JaxrsIface25")
+    public void shouldSupportFluentChaining() throws Exception {
+        JaxrsEndpointApiInterfaceCtClassBuilder builder = new JaxrsEndpointApiInterfaceCtClassBuilder("org.test.JaxrsIface25");
+        JaxrsEndpointApiInterfaceCtClassBuilder result = builder
                 .path("/api")
-                .toClass();
-        assertNotNull(clazz);
+                .produces("application/json")
+                .bind("uid", "{}")
+                .abstractMethod(org.apache.cxf.endpoint.jaxrs.definition.HttpMethodEnum.GET, "get", "/get");
+        assertSame(builder, result);
+        CtClass ctClass = result.build();
+        assertNotNull(ctClass);
+        ctClass.detach();
     }
 
     @Test

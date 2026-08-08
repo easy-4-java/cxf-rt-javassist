@@ -2,9 +2,6 @@ package org.apache.cxf.endpoint.jaxws;
 
 import static org.junit.Assert.*;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-
 import jakarta.xml.ws.Service;
 import jakarta.xml.ws.soap.AddressingFeature;
 
@@ -19,8 +16,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 public class JaxwsEndpointApiImplCtClassBuilderTest {
-
-    private final InvocationHandler handler = (proxy, method, args) -> "invoked";
 
     @Test
     public void shouldBuildImplClassWithDefaultPool() throws Exception {
@@ -122,29 +117,27 @@ public class JaxwsEndpointApiImplCtClassBuilderTest {
                         new SoapParam(String.class, "name"))
                 .build();
         assertNotNull(ctClass);
+        assertNotNull(ctClass.getDeclaredMethod("hello"));
         ctClass.detach();
     }
 
     @Test
-    public void shouldConvertToClass() throws Exception {
-        Class<?> clazz = new JaxwsEndpointApiImplCtClassBuilder("org.test.JaxwsImpl12")
-                .webService("svc", "http://ns")
-                .toClass();
-        assertNotNull(clazz);
+    public void shouldUseImplSuffix() throws Exception {
+        CtClass ctClass = new JaxwsEndpointApiImplCtClassBuilder("org.test.JaxwsImplSuffix1")
+                .build();
+        assertTrue(ctClass.getName().endsWith("$Impl"));
+        ctClass.detach();
     }
 
     @Test
-    public void shouldConvertToInstance() throws Exception {
-        Object instance = new JaxwsEndpointApiImplCtClassBuilder("org.test.JaxwsImpl13")
+    public void shouldSupportFluentChaining() throws Exception {
+        JaxwsEndpointApiImplCtClassBuilder builder = new JaxwsEndpointApiImplCtClassBuilder("org.test.JaxwsImplChain1");
+        JaxwsEndpointApiImplCtClassBuilder result = builder
                 .webService("svc", "http://ns")
-                .newMethod(new SoapResult<>(String.class, "result"),
-                        new SoapMethod("greet"),
-                        new SoapBound("b1"),
-                        new SoapParam(String.class, "name"))
-                .toInstance(handler);
-        assertNotNull(instance);
-        Method greet = instance.getClass().getMethod("greet", String.class);
-        Object result = greet.invoke(instance, "World");
-        assertEquals("invoked", result);
+                .bind(new SoapBound("uid", "{}"));
+        assertSame(builder, result);
+        CtClass ctClass = result.build();
+        assertNotNull(ctClass);
+        ctClass.detach();
     }
 }

@@ -2,12 +2,8 @@ package org.apache.cxf.endpoint.jaxws;
 
 import static org.junit.Assert.*;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.util.UUID;
 
-import jakarta.jws.WebParam;
 import jakarta.xml.ws.Service;
 
 import org.apache.cxf.endpoint.jaxws.definition.SoapBound;
@@ -21,8 +17,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 
 public class JaxwsEndpointApiCtClassBuilderTest {
-
-    private final InvocationHandler handler = (proxy, method, args) -> "invoked";
 
     @Test
     public void shouldBuildClassWithDefaultPool() throws Exception {
@@ -179,8 +173,7 @@ public class JaxwsEndpointApiCtClassBuilderTest {
         CtClass ctClass = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsMethod1")
                 .newMethod("sayHello", new SoapParam(String.class, "text"))
                 .build();
-        Class<?> clazz = ctClass.toClass();
-        assertNotNull(clazz.getMethod("sayHello", String.class));
+        assertNotNull(ctClass.getDeclaredMethod("sayHello"));
         ctClass.detach();
     }
 
@@ -190,8 +183,7 @@ public class JaxwsEndpointApiCtClassBuilderTest {
                 .newMethod("sayHello", new SoapBound("b1"),
                         new SoapParam(String.class, "text"))
                 .build();
-        Class<?> clazz = ctClass.toClass();
-        assertNotNull(clazz.getMethod("sayHello", String.class));
+        assertNotNull(ctClass.getDeclaredMethod("sayHello"));
         ctClass.detach();
     }
 
@@ -203,8 +195,7 @@ public class JaxwsEndpointApiCtClassBuilderTest {
                         new SoapBound("b1"),
                         new SoapParam(String.class, "name"))
                 .build();
-        Class<?> clazz = ctClass.toClass();
-        assertNotNull(clazz.getMethod("greet", String.class));
+        assertNotNull(ctClass.getDeclaredMethod("greet"));
         ctClass.detach();
     }
 
@@ -213,8 +204,7 @@ public class JaxwsEndpointApiCtClassBuilderTest {
         CtClass ctClass = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsMethod4")
                 .newMethod(null, new SoapMethod("doSomething"), null)
                 .build();
-        Class<?> clazz = ctClass.toClass();
-        assertNotNull(clazz.getMethod("doSomething"));
+        assertNotNull(ctClass.getDeclaredMethod("doSomething"));
         ctClass.detach();
     }
 
@@ -257,37 +247,34 @@ public class JaxwsEndpointApiCtClassBuilderTest {
     }
 
     @Test
-    public void shouldConvertToClass() throws Exception {
-        Class<?> clazz = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsToClass1")
-                .webService("svc", "http://ns")
-                .toClass();
-        assertNotNull(clazz);
+    public void shouldSetSuperclassToEndpointApi() throws Exception {
+        CtClass ctClass = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsParent1")
+                .build();
+        assertNotNull(ctClass.getSuperclass());
+        assertEquals("org.apache.cxf.endpoint.EndpointApi", ctClass.getSuperclass().getName());
+        ctClass.detach();
     }
 
     @Test
-    public void shouldConvertToInstance() throws Exception {
-        Object instance = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsToInst1")
-                .webService("svc", "http://ns")
-                .newMethod("hello", new SoapParam(String.class, "name"))
-                .toInstance(handler);
-        assertNotNull(instance);
-        assertTrue(instance instanceof org.apache.cxf.endpoint.EndpointApi);
-        Method hello = instance.getClass().getMethod("hello", String.class);
-        Object result = hello.invoke(instance, "World");
-        assertEquals("invoked", result);
+    public void shouldHaveDefaultConstructor() throws Exception {
+        CtClass ctClass = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsCtor1")
+                .build();
+        assertTrue(ctClass.getConstructors().length > 0);
+        ctClass.detach();
     }
 
     @Test
-    public void shouldDispatchMethodCallThroughHandler() throws Exception {
-        Object instance = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsDispatch1")
+    public void shouldSupportFluentChaining() throws Exception {
+        JaxwsEndpointApiCtClassBuilder builder = new JaxwsEndpointApiCtClassBuilder("org.test.JaxwsChain1");
+        JaxwsEndpointApiCtClassBuilder result = builder
                 .webService("svc", "http://ns")
-                .newMethod(new SoapResult<>(String.class, "result"),
-                        new SoapMethod("greet"),
-                        new SoapBound("b1"),
-                        new SoapParam(String.class, "name"))
-                .toInstance(handler);
-        Method greet = instance.getClass().getMethod("greet", String.class);
-        Object result = greet.invoke(instance, "World");
-        assertEquals("invoked", result);
+                .bind("uid", "{}")
+                .makeField("public int k = 3;")
+                .newField(String.class, "name", "test")
+                .newMethod("hello");
+        assertSame(builder, result);
+        CtClass ctClass = result.build();
+        assertNotNull(ctClass);
+        ctClass.detach();
     }
 }

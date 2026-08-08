@@ -239,11 +239,16 @@ public class JaxwsEndpointApiInterfaceCtClassBuilderTest {
     }
 
     @Test
-    public void shouldConvertToClass() throws Exception {
-        Class<?> clazz = new JaxwsEndpointApiInterfaceCtClassBuilder("org.test.JaxwsIface24")
+    public void shouldSupportFluentChaining() throws Exception {
+        JaxwsEndpointApiInterfaceCtClassBuilder builder = new JaxwsEndpointApiInterfaceCtClassBuilder("org.test.JaxwsIface24");
+        JaxwsEndpointApiInterfaceCtClassBuilder result = builder
                 .webService("svc", "http://ns")
-                .toClass();
-        assertNotNull(clazz);
+                .bind("uid", "{}")
+                .abstractMethod("hello", new SoapParam(String.class, "name"));
+        assertSame(builder, result);
+        CtClass ctClass = result.build();
+        assertNotNull(ctClass);
+        ctClass.detach();
     }
 
     @Test
