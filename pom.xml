@@ -487,21 +487,33 @@
 
     
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
-        <maven.version>3.0</maven.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        
+        <maven.version>3.0</maven.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Dependency versions -->
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
+        <commons-io.version>2.22.0</commons-io.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <cxf.version>4.2.2</cxf.version>
+        <easy4j-javassist-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-extension.version>
+        <javassist.version>3.32.0-GA</javassist.version>
+        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <junit.version>4.13.2</junit.version>
+        <lombok.version>1.18.46</lombok.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <!-- Maven Plugin versions -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
         <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
-        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-help-plugin.version>3.5.0</maven-help-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-invoker-plugin.version>3.8.0</maven-invoker-plugin.version>
@@ -514,18 +526,7 @@
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
-        <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <commons-lang3.version>3.20.0</commons-lang3.version>
-        <commons-io.version>2.22.0</commons-io.version>
-        <cxf.version>4.2.2</cxf.version>
-        <javassist.version>3.32.0-GA</javassist.version>
-        <easy4j-javassist-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-extension.version>
-        
-        <junit.version>4.13.2</junit.version>
-        <junit-jupiter.version>6.1.0</junit-jupiter.version>
-        <lombok.version>1.18.46</lombok.version>
-        <slf4j.version>2.0.18</slf4j.version>
-    <maven.compiler.release>${java.version}</maven.compiler.release><maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version><maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version></properties>
+    </properties>
 
     
     <dependencyManagement>
