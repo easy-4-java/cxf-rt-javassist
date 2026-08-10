@@ -26,7 +26,7 @@ package org.apache.cxf.endpoint.jaxws.definition;
  * {@linkplain #getWsdlLocation() WSDL location} and
  * {@linkplain #getEndpointInterface() endpoint interface}.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see jakarta.jws.WebService
  */

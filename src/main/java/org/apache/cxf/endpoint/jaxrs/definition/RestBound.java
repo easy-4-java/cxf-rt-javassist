@@ -26,7 +26,7 @@ package org.apache.cxf.endpoint.jaxrs.definition;
  * setters so that callers can adjust the JSON payload without
  * rebuilding the bound object.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see org.apache.cxf.endpoint.annotation.WebBound
  * @see org.apache.cxf.endpoint.utils.JaxrsEndpointApiUtils#annotWebBound(javassist.bytecode.ConstPool, RestBound)

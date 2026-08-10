@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  * possible when parsing incoming requests. Use {@link #valueOfIgnoreCase(String)}
  * to resolve a key regardless of casing.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see jakarta.ws.rs.HttpMethod
  */

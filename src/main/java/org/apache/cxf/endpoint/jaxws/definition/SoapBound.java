@@ -25,7 +25,7 @@ package org.apache.cxf.endpoint.jaxws.definition;
  * endpoint makes available to the implementation through the
  * annotation values.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see org.apache.cxf.endpoint.annotation.WebBound
  * @see org.apache.cxf.endpoint.utils.JaxwsEndpointApiUtils#annotWebBound(javassist.bytecode.ConstPool, SoapBound)

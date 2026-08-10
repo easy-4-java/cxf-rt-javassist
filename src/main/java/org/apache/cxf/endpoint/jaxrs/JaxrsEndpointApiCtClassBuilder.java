@@ -43,7 +43,7 @@ import javassist.bytecode.ConstPool;
  * <p>This is the JAX-RS counterpart of
  * {@link org.apache.cxf.endpoint.jaxws.JaxwsEndpointApiCtClassBuilder}.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see JaxrsEndpointApiUtils
  * @see JaxrsEndpointApiInterfaceCtClassBuilder

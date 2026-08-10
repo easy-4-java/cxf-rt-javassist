@@ -23,7 +23,7 @@ package org.apache.cxf.endpoint.jaxws.definition;
  * WSDL operation name}, an optional {@linkplain #getAction()
  * SOAPAction}, and an {@linkplain #isExclude() exclude} flag.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see jakarta.jws.WebMethod
  */

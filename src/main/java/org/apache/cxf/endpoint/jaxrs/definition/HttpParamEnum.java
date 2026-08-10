@@ -13,7 +13,7 @@ import jakarta.ws.rs.Encoded;
  * Use {@link RestParam#setFrom(HttpParamEnum)} to switch the binding
  * source for a particular parameter.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see jakarta.ws.rs.BeanParam
  * @see jakarta.ws.rs.CookieParam

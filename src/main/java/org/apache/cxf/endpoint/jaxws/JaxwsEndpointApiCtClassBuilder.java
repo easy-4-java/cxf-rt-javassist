@@ -47,7 +47,7 @@ import javassist.bytecode.annotation.Annotation;
  * <p>This is the JAX-WS counterpart of
  * {@link org.apache.cxf.endpoint.jaxrs.JaxrsEndpointApiCtClassBuilder}.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see JaxwsEndpointApiUtils
  * @see JaxwsEndpointApiInterfaceCtClassBuilder

@@ -34,7 +34,7 @@ import javassist.NotFoundException;
  * forwarded to the interface builder so that callers can treat the
  * pair as a single fluent surface.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see JaxwsEndpointApiCtClassBuilder
  * @see JaxwsEndpointApiInterfaceCtClassBuilder
