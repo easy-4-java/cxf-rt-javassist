@@ -8,7 +8,7 @@
 	<version>4.0.x.20241003.RELEASE</version>
 	<description>通过javassist生成基于cxf的jaxws、jaxrs实现 </description>
 	<name>${project.groupId}:${project.artifactId}</name>
-	<url>https://github.com/hiwepy/${project.artifactId}</url>
+	<url>https://github.com/easy-4-java/${project.artifactId}</url>
 	<packaging>jar</packaging>
 
 	<licenses>
@@ -19,9 +19,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:https:github.com/hiwepy/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:https:github.com/hiwepy/${project.artifactId}.git</developerConnection>
-		<url>https:github.com/hiwepy/${project.artifactId}</url>
+		<connection>scm:git:https:github.com/easy-4-java/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:https:github.com/easy-4-java/${project.artifactId}.git</developerConnection>
+		<url>https:github.com/easy-4-java/${project.artifactId}</url>
 		<tag>${project.artifactId}</tag>
 	</scm>
 
