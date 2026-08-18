@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2018, hiwepy (https://github.com/easy-4-java).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -45,8 +45,8 @@ import org.apache.cxf.endpoint.jaxrs.definition.RestBound;
 import org.apache.cxf.endpoint.jaxrs.definition.RestMethod;
 import org.apache.cxf.endpoint.jaxrs.definition.RestParam;
 
-import io.github.hiwepy.javassist.bytecode.CtAnnotationBuilder;
-import io.github.hiwepy.javassist.utils.JavassistUtils;
+import io.github.easy4j.javassist.bytecode.CtAnnotationBuilder;
+import io.github.easy4j.javassist.utils.JavassistUtils;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -163,7 +163,7 @@ public class JaxrsEndpointApiUtils {
 	
 	/**
 	 * 为方法添加 @HttpMethod、 @GET、 @POST、 @PUT、 @DELETE、 @PATCH、 @HEAD、 @OPTIONS、@Path、、@Consumes、@Produces、@RestBound、@RestParam 注解
-	 * @author 		： <a href="https://github.com/hiwepy">hiwepy</a>
+	 * @author 		： <a href="https://github.com/easy-4-java">hiwepy</a>
 	 * @param ctMethod {@link CtMethod} instance
 	 * @param constPool {@link ConstPool} instance 
 	 * @param method {@link RestMethod} instance 
