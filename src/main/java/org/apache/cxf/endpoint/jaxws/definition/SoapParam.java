@@ -29,7 +29,7 @@ import jakarta.jws.WebParam.Mode;
  * {@linkplain #isHeader() header} flag.</p>
  *
  * @param <T> the runtime type of the parameter.
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see jakarta.jws.WebParam
  */

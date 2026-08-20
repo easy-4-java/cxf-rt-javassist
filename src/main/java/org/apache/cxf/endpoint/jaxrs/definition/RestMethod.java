@@ -34,7 +34,7 @@ import jakarta.ws.rs.PUT;
  * method, along with optional {@code @Consumes} and {@code @Produces}
  * media-type lists.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see HttpMethodEnum
  * @see jakarta.ws.rs.Path

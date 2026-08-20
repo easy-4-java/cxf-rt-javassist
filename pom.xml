@@ -194,8 +194,10 @@
                     <configuration>
                         <skip>false</skip>
                         <skipTests>false</skipTests>
-                        <argLine>-Xmx1024m
-							-Dfile.encoding=UTF-8</argLine>
+                        <argLine>@{argLine} -Xmx1024m
+							-Dfile.encoding=UTF-8
+							--add-opens java.base/java.lang=ALL-UNNAMED
+							--add-opens java.base/java.lang.reflect=ALL-UNNAMED</argLine>
                         <additionalClasspathElements>
                             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
                         </additionalClasspathElements>

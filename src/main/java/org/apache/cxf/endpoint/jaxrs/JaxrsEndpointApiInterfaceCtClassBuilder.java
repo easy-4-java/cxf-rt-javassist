@@ -33,7 +33,7 @@ import javassist.bytecode.ConstPool;
  * {@link JaxrsEndpointApiImplCtClassBuilder} which generates the
  * paired implementation class.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see JaxrsEndpointApiCtClassBuilder
  * @see JaxrsEndpointApiImplCtClassBuilder

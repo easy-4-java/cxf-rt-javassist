@@ -26,7 +26,7 @@ package org.apache.cxf.endpoint.jaxrs.definition;
  * constructing the {@code @Path} and {@code @Produces} annotations on
  * a generated endpoint method.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see jakarta.ws.rs.Path
  * @see jakarta.ws.rs.Produces

@@ -33,7 +33,7 @@ import java.lang.reflect.InvocationHandler;
  * {@link org.apache.cxf.endpoint.jaxws.JaxwsEndpointApiCtClassBuilder} and
  * their related interface / implementation variants.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see InvocationHandler
  * @see org.apache.cxf.endpoint.jaxrs.JaxrsEndpointApiCtClassBuilder

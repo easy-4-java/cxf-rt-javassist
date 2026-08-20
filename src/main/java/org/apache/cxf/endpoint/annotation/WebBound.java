@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  * {@link Inherited} so that subclasses of a generated endpoint inherit
  * the binding declared on a parent type.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see org.apache.cxf.endpoint.jaxrs.definition.RestBound
  * @see org.apache.cxf.endpoint.jaxws.definition.SoapBound
