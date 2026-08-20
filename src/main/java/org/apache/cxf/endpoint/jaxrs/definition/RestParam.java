@@ -104,6 +104,7 @@ public class RestParam<T> {
 	public RestParam(Class<T> type, String name, HttpParamEnum from) {
 		this.type = type;
 		this.name = name;
+		this.from = from;
 	}
 
     /**
@@ -119,7 +120,7 @@ public class RestParam<T> {
 	public RestParam(Class<T> type, String name, HttpParamEnum from, String def ) {
 		this.type = type;
 		this.name = name;
-		this.name = name;
+		this.from = from;
 		this.def = def;
 	}
 
