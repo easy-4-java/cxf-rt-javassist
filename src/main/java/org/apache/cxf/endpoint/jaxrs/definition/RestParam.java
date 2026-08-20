@@ -29,7 +29,7 @@ package org.apache.cxf.endpoint.jaxrs.definition;
  * while leaving the rest at their default values.</p>
  *
  * @param <T> the runtime type of the parameter.
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see HttpParamEnum
  * @see jakarta.ws.rs.DefaultValue
@@ -104,6 +104,7 @@ public class RestParam<T> {
 	public RestParam(Class<T> type, String name, HttpParamEnum from) {
 		this.type = type;
 		this.name = name;
+		this.from = from;
 	}
 
     /**
@@ -119,7 +120,7 @@ public class RestParam<T> {
 	public RestParam(Class<T> type, String name, HttpParamEnum from, String def ) {
 		this.type = type;
 		this.name = name;
-		this.name = name;
+		this.from = from;
 		this.def = def;
 	}
 
