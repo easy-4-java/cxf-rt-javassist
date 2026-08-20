@@ -66,7 +66,7 @@ import javassist.bytecode.annotation.StringMemberValue;
  * Javassist classes, interfaces, constructors, methods, and
  * annotations.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 3.0.0
  * @see org.apache.cxf.endpoint.jaxrs.JaxrsEndpointApiCtClassBuilder
  */
@@ -459,7 +459,7 @@ public class JaxrsEndpointApiUtils {
 					
 					Annotation defAnnot = new Annotation(DefaultValue.class.getName(), constPool);
 					defAnnot.addMemberValue("value", new StringMemberValue(params[i].getDef(), constPool));
-					paramArrays[i][1] = paramAnnot;
+					paramArrays[i][1] = defAnnot;
 					
 				} else {
 					paramArrays[i][0] = paramAnnot;

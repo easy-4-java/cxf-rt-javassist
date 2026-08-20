@@ -20,7 +20,7 @@ public class RestParamTest {
         RestParam<String> param = new RestParam<>(String.class, "id", HttpParamEnum.PATH);
         assertEquals(String.class, param.getType());
         assertEquals("id", param.getName());
-        assertEquals(HttpParamEnum.QUERY, param.getFrom()); // known bug: from not persisted
+        assertEquals(HttpParamEnum.PATH, param.getFrom());
     }
 
     @Test
@@ -36,6 +36,7 @@ public class RestParamTest {
         RestParam<String> param = new RestParam<>(String.class, "name", HttpParamEnum.PATH, "defaultVal");
         assertEquals(String.class, param.getType());
         assertEquals("name", param.getName());
+        assertEquals(HttpParamEnum.PATH, param.getFrom());
         assertEquals("defaultVal", param.getDef());
     }
 
