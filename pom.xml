@@ -44,8 +44,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Dependency versions -->
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <commons-io.version>2.20.0</commons-io.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <commons-io.version>2.22.0</commons-io.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
         <cxf.version>4.2.2</cxf.version>
         <easy4j-javassist-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-extension.version>
         <javassist.version>3.32.0-GA</javassist.version>
